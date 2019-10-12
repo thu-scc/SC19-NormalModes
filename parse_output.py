@@ -6,89 +6,38 @@ def parse_output(filename):
     f = open(filename)
     st = "".join(f.readlines())
 
+    print('Parsing results ... ', flush=True, end='')
     meshname = re.compile("mesh name: (.*)").search(st).group(1)
-    print("meshname " + meshname)
-
-    mpisize = re.compile("mpi_size.*?(\d+)").search(st).group(1)
-    print("mpisize " + mpisize)
-    mpisize = int(mpisize)
-    
-    lower_freq = re.compile("lower frequency in mHz.*?([\d.]+)").search(st).group(1)
-    print("lower_freq " + lower_freq)
-    lower_freq = float(lower_freq)
-
-    upper_freq = re.compile("upper frequency in mHz.*?([\d.]+)").search(st).group(1)
-    print("upper_freq " + upper_freq)
-    upper_freq = float(upper_freq)
-
-    elements = re.compile("of elements:.*?(\d+)").search(st).group(1)
-    print("elements " + elements)
-    elements = int(elements)
-
-    vertices = re.compile("of vertices:.*?(\d+)").search(st).group(1)
-    print("vertices " + vertices)
-    vertices = int(vertices)
-
-    threads = re.compile("check number of threads.*?(\d+)").search(st).group(1)
-    print("threads " + threads)
-    threads = int(threads)
-
-    deg = re.compile("polynomial deg.*?(\d+)").search(st).group(1)
-    print("deg " + deg)
-    deg = int(deg)
+    mpi_ranks = int(re.compile("mpi_size.*?(\d+)").search(st).group(1))
+    lower_freq = float(re.compile("lower frequency in mHz.*?([\d.]+)").search(st).group(1))
+    upper_freq = float(re.compile("upper frequency in mHz.*?([\d.]+)").search(st).group(1))
+    elements = int(re.compile("of elements:.*?(\d+)").search(st).group(1))
+    vertices = int(re.compile("of vertices:.*?(\d+)").search(st).group(1))
+    threads = int(re.compile("check number of threads.*?(\d+)").search(st).group(1))
+    deg = int(re.compile("polynomial deg.*?(\d+)").search(st).group(1))
 
     lb = re.compile("lmin ([-+E.\d]+).*?lmax.*?([-+E.\d]+)", re.S).search(st)
-    lambda_min = lb.group(1)
-    lambda_max = lb.group(2)
-    print("lambda_min ", lambda_min)
-    print("lambda_max ", lambda_max)
-    lambda_min = float(lambda_min)
-    lambda_max = float(lambda_max)
+    lambda_min = float(lb.group(1))
+    lambda_max = float(lb.group(2))
 
-    tot_time = re.compile("Iteration time.*?([\d.]+)").search(st).group(1)
-    print("tot_time " + tot_time)
-    tot_time = float(tot_time)
+    tot_time = float(re.compile("Iteration time.*?([\d.]+)").search(st).group(1))
+    it = int(re.compile("Pol\(A\)\*v.*?([\d.]+).*?([\d]+).*?([\d.]+)").search(st).group(2))
+    rev_M_v_time = float(re.compile("Solve with B.*?([\d.]+).*?([\d]+).*?([\d.]+)").search(st).group(3))
 
-    Av = re.compile("Pol\(A\)\*v.*?([\d.]+).*?([\d]+).*?([\d.]+)").search(st)
-    it = Av.group(2)
-    Av_time = Av.group(3)
-    print("it " + it)
-    print("Av_time " + Av_time)
-    it = int(it)
-    Av_time = float(Av_time)
+    M_A_Times = re.compile("Matvec in ChebIter.*?([\d.]+).*?([\d]+).*?([\d.]+)").findall(st)
+    Mv_time = float(M_A_Times[0][2])
+    Av_time = float(M_A_Times[1][2])
 
-    rev_M_v_time= re.compile("Solve with B.*?([\d.]+).*?([\d]+).*?([\d.]+)").search(st).group(3)
-    print("rev_M_v_time " + rev_M_v_time)
-    rev_M_v_time = float(rev_M_v_time)
+    num_eigs = int(re.compile("Row\D*?(\d+?)\D*?[\d.E+-]*?\D*?Transform", re.S).search(st).group(1))
 
-    Mv_time = re.compile("Matvec in ChebIter.*?([\d.]+).*?([\d]+).*?([\d.]+)").search(st).group(3)
-    print("Mv_time " + Mv_time)
-    Mv_time = float(Mv_time)
-
-    num_eigs = re.compile("Row\D*?(\d+?)\D*?[\d.E+-]*?\D*?Transform", re.S).search(st).group(1)
-    print("num_eigs " + num_eigs)
-    num_eigs = int(num_eigs)
-    return {
-        "meshname": meshname,
-        "mpisize": mpisize,
-        "lower_freq": lower_freq,
-        "upper_freq": upper_freq,
-        "elements": elements,
-        "vertices": vertices,
-        "threads": threads,
-        "deg": deg,
-        "lambda_min": lambda_min,
-        "lambda_max": lambda_max,
-        "tot_time": tot_time,
-        "it": it,
-        "Av_time": Av_time,
-        "rev_M_v_time": rev_M_v_time,
-        "Mv_time": Mv_time,
-        "num_eigs": num_eigs
-    }
-
+    print('OK!', flush=True)
+    print('[FIGURE 7] RESULTS:')
+    print('-      Av: {:.6f}'.format(Av_time))
+    print('-      Mv: {:.6f}'.format(Mv_time))
+    print('- M^(-1)v: {:.6f}'.format(rev_M_v_time))
+    print('-   total: {:.6f}'.format(tot_time))
 
 if __name__ == '__main__':
     filename = sys.argv[1]
-    ans = parse_output(filename)
-    print(ans)
+    print('Reading output file: ' + filename + ' ... OK!')
+    parse_output(filename)
