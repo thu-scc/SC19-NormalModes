@@ -1,4 +1,5 @@
 import os
+import time
 
 log_dir = "logs"
 env_cmd = "source /home/zhaocg/intel_env.sh\ncd /home/zhaocg/SC19/NormalModes/demos\n"
@@ -34,11 +35,11 @@ def generate_global_conf(model):
 # Test configurations
 datasets = [
     {"label": "M1", "JOB": 2, "basename": "Mtopo_6L_test.1", "inputdir": "models/input/Moon/M1", "outputdir": "models/output/Moon/M1", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1},
-    {"label": "M2", "JOB": 2, "basename": "Mtopo_6L_1M.1"  , "inputdir": "models/input/Moon/M2", "outputdir": "models/output/Moon/M2", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1},
-    {"label": "M3", "JOB": 2, "basename": "Mtopo_6L_2M.1"  , "inputdir": "models/input/Moon/M3", "outputdir": "models/output/Moon/M3", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1},
-    {"label": "M4", "JOB": 2, "basename": "Mtopo_6L_test.1", "inputdir": "models/input/Moon/M4", "outputdir": "models/output/Moon/M4", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1},
-    {"label": "M5", "JOB": 2, "basename": "Mtopo_6L_test.1", "inputdir": "models/input/Moon/M5", "outputdir": "models/output/Moon/M5", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1},
-    {"label": "M6", "JOB": 2, "basename": "Mtopo_6L_test.1", "inputdir": "models/input/Moon/M6", "outputdir": "models/output/Moon/M6", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1}
+    # {"label": "M2", "JOB": 2, "basename": "Mtopo_6L_1M.1"  , "inputdir": "models/input/Moon/M2", "outputdir": "models/output/Moon/M2", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1},
+    # {"label": "M3", "JOB": 2, "basename": "Mtopo_6L_2M.1"  , "inputdir": "models/input/Moon/M3", "outputdir": "models/output/Moon/M3", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1},
+    # {"label": "M4", "JOB": 2, "basename": "Mtopo_6L_test.1", "inputdir": "models/input/Moon/M4", "outputdir": "models/output/Moon/M4", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1},
+    # {"label": "M5", "JOB": 2, "basename": "Mtopo_6L_test.1", "inputdir": "models/input/Moon/M5", "outputdir": "models/output/Moon/M5", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1},
+    # {"label": "M6", "JOB": 2, "basename": "Mtopo_6L_test.1", "inputdir": "models/input/Moon/M6", "outputdir": "models/output/Moon/M6", "lowfreq": 0.2, "upfreq": 2.0, "pOrder": 1}
 ]
 nodes_list = [1, 2, 3, 4, 5, 6, 7, 8]
 ranks = 24
@@ -66,5 +67,6 @@ for model in datasets:
         with open("slurm_generated_run.sh", "w") as f:
             f.write(generate_bash(nodes, ranks, threads, model["label"]))
         os.system("sbatch slurm_generated_run.sh")
-        print("[!]     Task submitted")
+        print("[!]     Task submitted, sleep 5s")
+        time.sleep(5)
 
