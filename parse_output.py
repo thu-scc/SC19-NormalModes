@@ -1,7 +1,6 @@
 import re
 import sys
 
-# warning: all variables are string! convert to int/float before use
 def parse_output(filename):
     f = open(filename)
     st = "".join(f.readlines())
