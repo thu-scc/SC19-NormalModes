@@ -41,14 +41,15 @@ def check():
     if dataset == None:
         print('No dataset selected')
         return
-    logs = os.listdir(log_dir).sort()
+    logs = os.listdir(log_dir)
+    logs.sort()
     models = dataset['models']
     for model in models:
         model['status'] = 'NOT STARTED'
     for log in logs:
         if not log.endswith('.log'): continue
         label = log.split('_')[0]
-        status = 'RUNNING'
+        status = 'UNFINISHED'
         with open(os.path.join(log_dir, log), 'r') as f:
             if f.read().find('save the results') != -1:
                 status = 'DONE'
@@ -64,15 +65,20 @@ def parse(label):
         print('No dataset selected')
         return
     model = get_model(label)
-    parse_output.parse_output(os.path.join(log_dir, model_log(model)), True, label, model['nodes'], model['ranks'])
+    try:
+        parse_output.parse_output(model_log(model), True, label, model['nodes'], model['ranks'])
+    except:
+        print('Error while parsing')
 
 def switch_dataset(name):
+    global current_dataset, dataset
     current_dataset = name
     if not name in datasets:
         print('Invalid dataset')
     else:
         dataset = datasets[name]
         print('Dataset switched to {}'.format(name))
+
 def plot_weak():
     pass
 
@@ -100,19 +106,20 @@ def run(label):
     bash += env_cmd
     run_cmd = 'mpirun -n {} -hosts {} {}'.format(model['nodes'] * model['ranks'], nodes_list, bin_path)
     bash += run_cmd
-    print('Command will be {}'.format(run_cmd))
-    choice = input('> Confirm? (y/n)')
+    print('Command will be: {}'.format(run_cmd))
+    choice = input('> Confirm? (y/n) ')
     if choice != 'y':
         print('Canceled')
         return
     with open('cluster_generated_run.sh', 'w') as f:
         f.write(bash)
-    os.system('bash cluster_generated_run.sh')
+    os.system('nohup bash cluster_generated_run.sh > {} 2>&1 &'.format(model_log(model)))
     print('Task submitted')
 
 log_dir = 'logs/'
 bin_path = '../bin/plmvcg_istar.out'
-env_cmd = 'source /home/zhaocg/intel_env.sh\ncd /home/zhaocg/SC19/NormalModes/demos\n'
+
+env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup-env.sh\nsource /home/zhaocg/intel_env.sh\ncd /home/zhaocg/SC19/NormalModes/demos\n'
 
 datasets['weak'] = {
     'models': [
