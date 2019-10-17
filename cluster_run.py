@@ -4,6 +4,7 @@ import subprocess
 
 import parse_output
 
+current_dataset = 'None'
 dataset = None
 datasets = {}
 
@@ -37,6 +38,9 @@ def pre_check():
         os.makedirs(log_dir)
 
 def check():
+    if dataset == None:
+        print('No dataset selected')
+        return
     logs = os.listdir(log_dir).sort()
     models = dataset['models']
     for model in models:
@@ -56,15 +60,19 @@ def check():
         print('- {}: {}'.format(model['label'], model['status']))
 
 def parse(label):
+    if dataset == None:
+        print('No dataset selected')
+        return
     model = get_model(label)
     parse_output.parse_output(os.path.join(log_dir, model_log(model)), True, label, model['nodes'], model['ranks'])
 
 def switch_dataset(name):
+    current_dataset = name
     if not name in datasets:
         print('Invalid dataset')
     else:
         dataset = datasets[name]
-
+        print('Dataset switched to {}'.format(name))
 def plot_weak():
     pass
 
@@ -74,7 +82,13 @@ def plot():
     else:
         dataset['plot']()
 
+def show():
+    print('Current dataset: {}'.format(str(current_dataset)))
+
 def run(label):
+    if dataset == None:
+        print('No dataset selected')
+        return
     nodes_list = input('> Input list of nodes: ')
     model = get_model(label)
     if len(nodes_list.split(',')) != model['nodes']:
@@ -88,7 +102,7 @@ def run(label):
     bash += run_cmd
     print('Command will be {}'.format(run_cmd))
     choice = input('> Confirm? (y/n)')
-    if choice != y:
+    if choice != 'y':
         print('Canceled')
         return
     with open('cluster_generated_run.sh', 'w') as f:
@@ -114,7 +128,7 @@ datasets['weak'] = {
 
 if __name__ == "__main__":
     print('SCC 19, Tsinghua University, Reproduciblity Command Line')
-    print('Commands: switch <experiment>, run <label>, parse <label>, check, plot, exit')
+    print('Commands: switch <experiment>, run <label>, parse <label>, show, check, plot, exit')
     print('Notes: this script must be run in demos dir, e.g.: python3 tools/cluster_run.py in demos dir')
     pre_check()
     while True:
@@ -140,7 +154,13 @@ if __name__ == "__main__":
             parse(line[1])
         elif command == 'check':
             check()
+        elif command == 'show':
+            show()
         elif command == 'plot':
             plot()
+        elif command == '':
+            pass
+        else:
+            print('Invalid command')
 
 
