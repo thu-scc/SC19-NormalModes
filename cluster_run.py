@@ -119,7 +119,7 @@ def run(label):
 log_dir = 'logs/'
 bin_path = '../bin/plmvcg_istar.out'
 
-env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup-env.sh\nsource /home/zhaocg/intel_env.sh\ncd /home/zhaocg/SC19/NormalModes/demos\n'
+env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup-env.sh\nsource $HOME/intel_env.sh\ncd $HOME/SC19/NormalModes/demos\n'
 
 datasets['weak'] = {
     'models': [
