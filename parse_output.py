@@ -61,7 +61,7 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
         "nn": nodes,
         "np": ranks,
         "meshname": meshname,
-        "mpi_ranks": mpisize,
+        "mpi_ranks": mpi_ranks,
         "lower_freq": lower_freq,
         "upper_freq": upper_freq,
         "elements": elements,

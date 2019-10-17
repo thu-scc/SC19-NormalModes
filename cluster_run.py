@@ -3,6 +3,7 @@ import time
 import subprocess
 
 import parse_output
+import matplotlib.pyplot as plt
 
 current_dataset = 'None'
 dataset = None
@@ -60,15 +61,18 @@ def check():
     for model in models:
         print('- {}: {}'.format(model['label'], model['status']))
 
-def parse(label):
+def parse(label, print_result = True):
     if dataset == None:
         print('No dataset selected')
         return
     model = get_model(label)
     try:
-        parse_output.parse_output(model_log(model), True, label, model['nodes'], model['ranks'])
+        out = parse_output.parse_output(model_log(model), print_result, label, model['nodes'], model['ranks'])
+        model['json-log'] = out
+        return True
     except:
-        print('Error while parsing')
+        print('Error while parsing {}'.format(label))
+        return False
 
 def switch_dataset(name):
     global current_dataset, dataset
@@ -79,10 +83,55 @@ def switch_dataset(name):
         dataset = datasets[name]
         print('Dataset switched to {}'.format(name))
 
+def get_valid_result():
+    check()
+    done = []
+    for model in dataset['models']:
+        if model['status'] == 'DONE' and parse(model['label'], False):
+            done.append(model)
+    print("Available models: {}".format([x['label'] for x in done]))
+    return done
+
 def plot_weak():
-    pass
+    done = get_valid_result()
+    label = []
+    Av = []
+    Mv = []
+    nodes = []
+    for model in done:
+        Av.append(model['json-log']['Av_time'])
+        Mv.append(model['json-log']['Mv_time'])
+        nodes.append(model['json-log']['nn'])
+        label.append(model['label'])
+    plt.semilogx(nodes, Av, 'o-', label="Av")
+    plt.semilogx(nodes, Mv, '*-', label="Mv")
+    plt.xlabel("number of nodes")
+    plt.ylabel("time (s)")
+    plt.legend()
+    plt.savefig("plot/weak-time.eps")
+    plt.show()
+
+    # assume done[0] is test M1
+    Av_eff = [Av[0]/t for t in Av]
+    Mv_eff = [Mv[0]/t for t in Mv]
+    plt.semilogx(nodes, Av_eff, 'o-', label="Av")
+    plt.semilogx(nodes, Mv_eff, '*-', label="Mv")
+    plt.xlabel("number of nodes")
+    plt.ylabel("efficiency")
+    plt.legend()
+    plt.savefig("plot/weak-efficiency.eps")
+    plt.show()
+
+    f = open("plot/weak.csv", "w")
+    f.write("label, Av, Mv, Av-eff, Mv-eff\n")
+    for i in range(len(done)):
+        f.write("{},{},{},{},{}\n".format(label[i], Av[i], Mv[i], Av_eff[i], Mv_eff[i]))
+    f.close()
+
 
 def plot():
+    if (not os.path.exists("plot")):
+        os.mkdir("plot")
     if dataset == None:
         print('No dataset selected')
     else:
@@ -123,12 +172,12 @@ env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup
 
 datasets['weak'] = {
     'models': [
-        {'label': 'M1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1', 'outputdir': 'models/output/Moon/M1', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        {'label': 'M2', 'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        {'label': 'M3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 3, 'ranks': 56, 'threads': 1},
-        {'label': 'M4', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4', 'outputdir': 'models/output/Moon/M4', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
-        {'label': 'M5', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5', 'outputdir': 'models/output/Moon/M5', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 5, 'ranks': 56, 'threads': 1},
-        {'label': 'M6', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6', 'outputdir': 'models/output/Moon/M6', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 6, 'ranks': 56, 'threads': 1}
+        {'label': 'M1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1', 'outputdir': 'models/output/Moon/M1', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
+        {'label': 'M2', 'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
+        {'label': 'M3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 3, 'ranks': 24, 'threads': 1},
+        {'label': 'M4', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4', 'outputdir': 'models/output/Moon/M4', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
+        {'label': 'M5', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5', 'outputdir': 'models/output/Moon/M5', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 5, 'ranks': 24, 'threads': 1},
+        {'label': 'M6', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6', 'outputdir': 'models/output/Moon/M6', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 6, 'ranks': 24, 'threads': 1}
     ],
     "plot": plot_weak
 }
@@ -165,6 +214,16 @@ if __name__ == "__main__":
             show()
         elif command == 'plot':
             plot()
+        elif command == 'download':
+            if (not os.path.exists("trash")):
+                os.mkdir("trash")
+            if (os.path.exists("logs")):
+                cmd = "mv logs trash/logs-{}".format(time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()))
+                print(cmd)
+                os.system(cmd)
+            cmd = "scp -r i1:~/SC19/NormalModes/demos/logs ."
+            print(cmd)
+            os.system(cmd)
         elif command == '':
             pass
         else:
