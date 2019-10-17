@@ -35,7 +35,7 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
 
     print('OK!', flush=True)
     if print_result:
-        print('[MODEL] INFO:')
+        print('Model Info:')
         if nodes > 0:
             print('-   Model: {}'.format(model))
             print('-   nn/np: {}/{}'.format(nodes, ranks))
@@ -43,15 +43,15 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
         if Ag_size: print('- Ag size: {}'.format(Ag_size))
         # if A_size : print('- A  size: {}'.format(A_size))
         if Ap_size: print('- Ap size: {}'.format(Ap_size))
-        print('[WEAK SCALING] RESULTS:')
+        print('Weak Scaling:')
         print('-      Av: {:.6f}'.format(Av_time))
         print('-      Mv: {:.6f}'.format(Mv_time))
-        print('[FIXED INTERVAL] RESULTS:')
+        print('Fixed Interval:')
         print('- (ln,lx): ({:.6f}, {:.6f})'.format(lambda_min, lambda_max))
         print('- (lo,up): ({}, {})'.format(lower_freq, upper_freq))
         print('- (dg,it): ({}, {})'.format(deg, it))
         print('-   total: {:.6f}'.format(tot_time))
-        print('[STRONG SCALABILITY] RESULTS:')
+        print('Strong Scalability:')
         print('-      Av: {:.6f}'.format(Av_time))
         print('-      Mv: {:.6f}'.format(Mv_time))
         print('-  rev_Mv: {:.6f}'.format(rev_M_v_time))
