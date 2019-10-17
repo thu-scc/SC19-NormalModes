@@ -34,18 +34,15 @@ def generate_global_conf(model):
     global_conf += 'pOrder = {}\n'.format(model['pOrder'])         ; print('[-]     pOrder={}'.format(model['pOrder']))
     return global_conf
 
-# Test configurations
+# Weak scalability
 datasets = [
-    {'label': 'M1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1', 'outputdir': 'models/output/Moon/M1', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1},
-    {'label': 'M2', 'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1},
-    {'label': 'M3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1},
-    {'label': 'M4', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4', 'outputdir': 'models/output/Moon/M4', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1},
-    {'label': 'M5', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5', 'outputdir': 'models/output/Moon/M5', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1},
-    {'label': 'M6', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6', 'outputdir': 'models/output/Moon/M6', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1}
+        {'label': 'M1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1', 'outputdir': 'models/output/Moon/M1', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks':  28, 'threads': 1},
+        {'label': 'M2', 'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks':  56, 'threads': 1},
+        {'label': 'M3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 3, 'ranks':  84, 'threads': 1},
+        {'label': 'M4', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4', 'outputdir': 'models/output/Moon/M4', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 112, 'threads': 1},
+        {'label': 'M5', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5', 'outputdir': 'models/output/Moon/M5', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 5, 'ranks': 140, 'threads': 1},
+        {'label': 'M6', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6', 'outputdir': 'models/output/Moon/M6', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 6, 'ranks': 168, 'threads': 1}
 ]
-nodes_list = [1, 2, 3, 4, 5, 6, 7, 8]
-ranks = 24
-threads = 1
 
 print('[N] Notes: this script must be run in demos dir, e.g.: python3 tools/slurm_run.py in demos dir')
 for model in datasets:
@@ -61,16 +58,15 @@ for model in datasets:
     with open('global_conf', 'w') as f:
         f.write(global_conf)
         print('[I] global_conf written')
-    print('[-]   Beginning to run on {} nodes'.format(nodes_list))
-    for nodes in nodes_list:
-        print('[!]     Nodes: {}'.format(nodes))
-        print('[!]     Ranks per node: {}'.format(ranks))
-        print('[!]     Threads per rank: {}'.format(threads))
-        with open('slurm_generated_run.sh', 'w') as f:
-            f.write(generate_bash(nodes, ranks, threads, model['label']))
-        os.system('sbatch slurm_generated_run.sh')
-        print('[!]     Task submitted, sleep 5s')
-        time.sleep(5)
+    nodes, ranks, threads = model['nodes'], model['ranks'], model['threads']
+    print('[!]     Nodes: {}'.format(nodes))
+    print('[!]     Ranks per node: {}'.format(ranks))
+    print('[!]     Threads per rank: {}'.format(threads))
+    with open('slurm_generated_run.sh', 'w') as f:
+        f.write(generate_bash(nodes, ranks, threads, model['label']))
+    os.system('sbatch slurm_generated_run.sh')
+    print('[!]     Task submitted, sleep 5s')
+    time.sleep(5)
     print('[!]   Waiting the tasks to be finished')
     while True:
         if subprocess.check_output(['squeue']).decode('utf-8').find(run_user) == -1:
