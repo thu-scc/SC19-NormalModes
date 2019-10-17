@@ -56,6 +56,29 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
         print('-      Mv: {:.6f}'.format(Mv_time))
         print('-  rev_Mv: {:.6f}'.format(rev_M_v_time))
         print('-   total: {:.6f}'.format(tot_time))
+    return {
+        "model": model,
+        "nn": nodes,
+        "np": ranks,
+        "meshname": meshname,
+        "mpi_ranks": mpisize,
+        "lower_freq": lower_freq,
+        "upper_freq": upper_freq,
+        "elements": elements,
+        "vertices": vertices,
+        "threads": threads,
+        "deg": deg,
+        "Ag_size": Ag_size,
+        "Ap_size": Ap_size,
+        "lambda_min": lambda_min,
+        "lambda_max": lambda_max,
+        "tot_time": tot_time,
+        "it": it,
+        "Av_time": Av_time,
+        "rev_M_v_time": rev_M_v_time,
+        "Mv_time": Mv_time,
+        "num_eigs": num_eigs
+    }
 
 if __name__ == '__main__':
     filename = sys.argv[1]
