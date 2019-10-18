@@ -92,8 +92,77 @@ def get_valid_result():
     print("Available models: {}".format([x['label'] for x in done]))
     return done
 
+# the first line is title
+def toTable(input, theme = "display"):
+    for i in range(len(input)):
+        if (len(input[i]) != len(input[0])):
+            print("invalid format!")
+            print(input)
+            return
+
+    in_line = ""
+    enter = ""
+    first = ""
+    middle = ""
+    last = ""
+    if theme == "csv":
+        in_line = ","
+        first = ""
+        middle = "\n"
+        enter = "\n"
+        last = ""
+    elif theme == "complex":
+        in_line = "&"
+        enter = "^_^\n"
+        first =  "=======================================\n"
+        middle = "\n---------------------------------------\n"
+        last =   "***************************************\n"
+    elif theme == 'display':
+        in_line = '\t'
+        first = ""
+        middle = "\n"
+        enter = "\n"
+        last = ""
+    else:
+        print("theme {} not support!".format(theme))
+
+    # and more format ...
+    st = first
+    is_title = True
+    for item in input:
+        is_first = True
+        for x in item:
+            if (not is_first):
+                st += in_line
+            is_first = False
+            st += str(x)
+        if (is_title):
+            st += middle
+            is_title = False
+        else:
+            st += enter
+    st += last
+    return st
+
 def plot_weak():
     done = get_valid_result()
+    
+    # table
+    tb_detail = [['model', 'nn', 'np', 'ele', 'Ag', 't_Av', 't_Mv']]
+    for model in done:
+        log = model['json-log']
+        tb_detail.append([log['model'],
+                         log['nn'],
+                         log['np'],
+                         log['elements'],
+                         log['Ag_size'],
+                         log['Av_time'],
+                         log['Mv_time']])
+    f = open('plot/weak.table', "w")
+    f.write(toTable(tb_detail, 'complex'))
+    f.close()
+
+    # plot time
     label = []
     Av = []
     Mv = []
@@ -109,9 +178,9 @@ def plot_weak():
     plt.ylabel("time (s)")
     plt.legend()
     plt.savefig("plot/weak-time.eps")
-    plt.show()
+    plt.close()
 
-    # assume done[0] is test M1
+    # plot efficiency, assume done[0] is test M1
     Av_eff = [Av[0]/t for t in Av]
     Mv_eff = [Mv[0]/t for t in Mv]
     plt.semilogx(nodes, Av_eff, 'o-', label="Av")
@@ -120,22 +189,24 @@ def plot_weak():
     plt.ylabel("efficiency")
     plt.legend()
     plt.savefig("plot/weak-efficiency.eps")
-    plt.show()
+    plt.close()
 
-    f = open("plot/weak.csv", "w")
-    f.write("label, Av, Mv, Av-eff, Mv-eff\n")
+    # save data used in plot
+    f = open("plot/weak.plot", "w")
+    tb_title = ["model", "Av", "Mv", "Av-eff", "Mv-eff"]
+    tb = [tb_title]
     for i in range(len(done)):
-        f.write("{},{},{},{},{}\n".format(label[i], Av[i], Mv[i], Av_eff[i], Mv_eff[i]))
+        model = done[i]
+        tb.append([label[i], Av[i], Mv[i], Av_eff[i], Mv_eff[i]])
+    f.write(toTable(tb))
     f.close()
-
 
 def plot():
     if (not os.path.exists("plot")):
         os.mkdir("plot")
     if dataset == None:
         print('No dataset selected')
-    else:
-        dataset['plot']()
+    else:        dataset['plot']()
 
 def show():
     print('Current dataset: {}'.format(str(current_dataset)))
@@ -184,7 +255,7 @@ datasets['weak'] = {
 
 if __name__ == "__main__":
     print('SCC 19, Tsinghua University, Reproduciblity Command Line')
-    print('Commands: switch <experiment>, run <label>, parse <label>, show, check, plot, exit')
+    print('Commands: switch <experiment>, run <label>, parse <label>, show, check, plot, download, exit')
     print('Notes: this script must be run in demos dir, e.g.: python3 tools/cluster_run.py in demos dir')
     pre_check()
     while True:
