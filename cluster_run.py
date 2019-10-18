@@ -96,9 +96,10 @@ def get_valid_result():
 def toTable(input, theme = "display"):
     for i in range(len(input)):
         if (len(input[i]) != len(input[0])):
-            print("invalid format!")
-            print(input)
-            return
+            print("ERROR! Invalid format in row {}!".format(i))
+            print(input[0])
+            print(input[i])
+            return ""
 
     in_line = ""
     enter = ""
@@ -124,7 +125,8 @@ def toTable(input, theme = "display"):
         enter = "\n"
         last = ""
     else:
-        print("theme {} not support!".format(theme))
+        print("ERROR! Theme {} not support!".format(theme))
+        return ""
 
     # and more format ...
     st = first
@@ -159,7 +161,7 @@ def plot_weak():
                          log['Av_time'],
                          log['Mv_time']])
     f = open('plot/weak.table', "w")
-    f.write(toTable(tb_detail, 'complex'))
+    f.write(toTable(tb_detail, 'display'))
     f.close()
 
     # plot time
@@ -200,6 +202,63 @@ def plot_weak():
         tb.append([label[i], Av[i], Mv[i], Av_eff[i], Mv_eff[i]])
     f.write(toTable(tb))
     f.close()
+
+def plot_fix():
+    done = get_valid_result()
+    
+    # table
+    tb_detail = [['model', '(ln, lx)', '(xi,eta)',  '(deg, #it)', '#eigs', 'total']]
+    for model in done:
+        log = model['json-log']
+        tb_detail.append([log['model'],
+                         "({},{})".format(log['lambda_min'], log['lambda_max']),
+                         "({},{})".format(log['xi'], log['eta']),
+                         "({},{})".format(log['deg'], log['it']),
+                         log['num_eigs'],
+                         log['tot_time']])
+
+    f = open('plot/fix.table', "w")
+    f.write(toTable(tb_detail, 'display'))
+    f.close()
+
+    # plot
+    tb_plot = [['model', 'size', 'deg', 'it', 'time']]
+    size = []
+    deg = []
+    it = []
+    tm = []
+    for model in done:
+        log = model['json-log']
+        tb_plot.append([
+            log['model'],
+            log['Ag_size'],
+            log['deg'],
+            log['it'],
+            log['tot_time']
+        ])
+        size.append(log['Ag_size'])
+        deg.append(log['deg'])
+        it.append(log['it'])
+        tm.append(log['tot_time'])
+    plt.subplot(2,2,1)
+    plt.semilogx(size, deg, 'o-', label="deg")
+    plt.xlabel("size")
+    plt.legend()
+
+    plt.subplot(2,2,2)
+    plt.semilogx(size, it, 'o-', label="it")
+    plt.xlabel("size")
+    plt.legend()
+
+    plt.subplot(2,2,3)
+    plt.semilogx(size, tm, 'o-', label="tm")
+    plt.xlabel("size")
+    plt.legend()
+
+    plt.savefig("plot/fix-plot.eps")
+    plt.close()
+    
+    
 
 def plot():
     if (not os.path.exists("plot")):
@@ -250,7 +309,7 @@ datasets['weak'] = {
         {'label': 'M5', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5', 'outputdir': 'models/output/Moon/M5', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 5, 'ranks': 24, 'threads': 1},
         {'label': 'M6', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6', 'outputdir': 'models/output/Moon/M6', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 6, 'ranks': 24, 'threads': 1}
     ],
-    "plot": plot_weak
+    "plot": plot_fix
 }
 
 if __name__ == "__main__":
