@@ -38,8 +38,8 @@ def pre_check():
         os.makedirs(log_dir)
 
 def check():
+    print('Current dataset: {}'.format(str(current_dataset)))
     if dataset == None:
-        print('No dataset selected')
         return
     logs = os.listdir(log_dir)
     logs.sort()
@@ -58,7 +58,9 @@ def check():
                 model['status'] = status
     print('Current status:')
     for model in models:
-        print('- {}: {}'.format(model['label'], model['status']))
+        info = '- {}: {}'.format(model['label'], model['status'])
+        if 'running_on' in model: info += ' (Last run on {})'.format(model['running_on'])
+        print(info)
 
 def parse(label):
     if dataset == None:
@@ -88,23 +90,25 @@ def plot():
     else:
         dataset['plot']()
 
-def show():
-    print('Current dataset: {}'.format(str(current_dataset)))
-
 def run(label):
     if dataset == None:
         print('No dataset selected')
         return
-    nodes_list = input('> Input list of nodes: ')
+    nodes_list_str = input('> Input list of nodes: ')
+    nodes_list_arr = nodes_list_str.split(',')
     model = get_model(label)
-    if len(nodes_list.split(',')) != model['nodes']:
-        print('Numbers of nodes do not match')
+    if len(nodes_list_arr) != model['nodes']:
+        print('Number of nodes does not match')
         return
+    for node_name in nodes_list_arr:
+        if not node_name in available_nodes:
+            print('Invalid node {}'.format(node_name))
+            return
     bash = ''
     bash += '#!/bin/bash\n'
     bash += 'export OMP_NUM_THREADS={}\n'.format(model['threads'])
     bash += env_cmd
-    run_cmd = 'mpirun -n {} -hosts {} {}'.format(model['nodes'] * model['ranks'], nodes_list, bin_path)
+    run_cmd = 'mpirun -n {} -hosts {} {}'.format(model['nodes'] * model['ranks'], nodes_list_str, bin_path)
     bash += run_cmd
     print('Command will be: {}'.format(run_cmd))
     choice = input('> Confirm? (y/n) ')
@@ -114,10 +118,12 @@ def run(label):
     with open('cluster_generated_run.sh', 'w') as f:
         f.write(bash)
     os.system('nohup bash cluster_generated_run.sh > {} 2>&1 &'.format(model_log(model)))
+    model['running_on'] = nodes_list_str
     print('Task submitted')
 
 log_dir = 'logs/'
 bin_path = '../bin/plmvcg_istar.out'
+available_nodes = ['i1', 'i2', 'i3', 'i4']
 
 env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup-env.sh\nsource $HOME/intel_env.sh\ncd $HOME/SC19/NormalModes/demos\n'
 
@@ -135,7 +141,7 @@ datasets['weak'] = {
 
 if __name__ == "__main__":
     print('SCC 19, Tsinghua University, Reproduciblity Command Line')
-    print('Commands: switch <experiment>, run <label>, parse <label>, show, check, plot, exit')
+    print('Commands: switch <experiment>, run <label>, parse <label>, check, plot, exit')
     print('Notes: this script must be run in demos dir, e.g.: python3 tools/cluster_run.py in demos dir')
     pre_check()
     while True:
@@ -161,8 +167,6 @@ if __name__ == "__main__":
             parse(line[1])
         elif command == 'check':
             check()
-        elif command == 'show':
-            show()
         elif command == 'plot':
             plot()
         elif command == '':
