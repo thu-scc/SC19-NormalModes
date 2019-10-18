@@ -3,6 +3,7 @@ import time
 import subprocess
 
 import parse_output
+from plot_result import plot_weak, plot_fix, plot_strong
 
 current_dataset = 'None'
 dataset = None
@@ -62,15 +63,18 @@ def check():
         if 'running_on' in model: info += ' (Last run on {})'.format(model['running_on'])
         print(info)
 
-def parse(label):
+def parse(label, print_result = True):
     if dataset == None:
         print('No dataset selected')
         return
     model = get_model(label)
     try:
-        parse_output.parse_output(model_log(model), True, label, model['nodes'], model['ranks'])
+        out = parse_output.parse_output(model_log(model), print_result, label, model['nodes'], model['ranks'])
+        model['json-log'] = out
+        return True
     except:
-        print('Error while parsing')
+        print('Error while parsing {}'.format(label))
+        return False
 
 def switch_dataset(name):
     global current_dataset, dataset
@@ -81,14 +85,23 @@ def switch_dataset(name):
         dataset = datasets[name]
         print('Dataset switched to {}'.format(name))
 
-def plot_weak():
-    pass
+def get_valid_result():
+    check()
+    done = []
+    for model in dataset['models']:
+        if model['status'] == 'DONE' and parse(model['label'], False):
+            done.append(model)
+    print("Available models: {}".format([x['label'] for x in done]))
+    return done
 
 def plot():
+    if (not os.path.exists("plot")):
+        os.mkdir("plot")
     if dataset == None:
         print('No dataset selected')
     else:
-        dataset['plot']()
+        done = get_valid_result()
+        dataset['plot'](done)
 
 def run(label):
     if dataset == None:
@@ -141,7 +154,7 @@ datasets['weak'] = {
 
 if __name__ == "__main__":
     print('SCC 19, Tsinghua University, Reproduciblity Command Line')
-    print('Commands: switch <experiment>, run <label>, parse <label>, check, plot, exit')
+    print('Commands: switch <experiment>, run <label>, parse <label>, check, plot, download, exit')
     print('Notes: this script must be run in demos dir, e.g.: python3 tools/cluster_run.py in demos dir')
     pre_check()
     while True:
@@ -169,6 +182,16 @@ if __name__ == "__main__":
             check()
         elif command == 'plot':
             plot()
+        elif command == 'download':
+            if (not os.path.exists("trash")):
+                os.mkdir("trash")
+            if (os.path.exists("logs")):
+                cmd = "mv logs trash/logs-{}".format(time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()))
+                print(cmd)
+                os.system(cmd)
+            cmd = "scp -r i1:~/SC19/NormalModes/demos/logs ."
+            print(cmd)
+            os.system(cmd)
         elif command == '':
             pass
         else:

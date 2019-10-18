@@ -1,2 +1,5 @@
 sync_to*
 logs
+trash
+plot
+__pycache__

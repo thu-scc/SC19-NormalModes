@@ -13,6 +13,11 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
     elements = int(re.compile('of elements:.*?(\d+)').search(st).group(1))
     vertices = int(re.compile('of vertices:.*?(\d+)').search(st).group(1))
     threads = int(re.compile('check number of threads.*?(\d+)').search(st).group(1))
+
+    xi_eta = re.compile('intv:\[([-+e.\d]+), ([-+e.\d]+),').search(st)
+    xi = float(xi_eta.group(1))
+    eta = float(xi_eta.group(2))
+
     deg = int(re.compile('polynomial deg.*?(\d+)').search(st).group(1))
     Ag_size = A_size = Ap_size = 0
     if st.find('total Ad size') != -1: Ag_size = int(re.compile('total Ad size.*?(\d+)').search(st).group(1))
@@ -32,13 +37,14 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
     Av_time = float(M_A_Times[1][2])
 
     num_eigs = int(re.compile('Row\D*?(\d+?)\D*?[\d.E+-]*?\D*?Transform', re.S).search(st).group(1))
+    np = nodes * ranks
 
     print('OK!', flush=True)
     if print_result:
         print('Model Info:')
         if nodes > 0:
             print('-   Model: {}'.format(model))
-            print('-   nn/np: {}/{}'.format(nodes, ranks))
+            print('-   nn/np: {}/{}'.format(nodes, np))
         print('-     elm: {}'.format(elements))
         if Ag_size: print('- Ag size: {}'.format(Ag_size))
         # if A_size : print('- A  size: {}'.format(A_size))
@@ -48,7 +54,7 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
         print('-      Mv: {:.6f}'.format(Mv_time))
         print('Fixed Interval:')
         print('- (ln,lx): ({:.6f}, {:.6f})'.format(lambda_min, lambda_max))
-        print('- (lo,up): ({}, {})'.format(lower_freq, upper_freq))
+        print('- (xi,eta): ({}, {})'.format(xi, eta))
         print('- (dg,it): ({}, {})'.format(deg, it))
         print('-   total: {:.6f}'.format(tot_time))
         print('Strong Scalability:')
@@ -59,11 +65,13 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
     return {
         "model": model,
         "nn": nodes,
-        "np": ranks,
+        "np": np,
         "meshname": meshname,
-        "mpi_ranks": mpisize,
+        "mpi_ranks": mpi_ranks,
         "lower_freq": lower_freq,
         "upper_freq": upper_freq,
+        "xi": xi,
+        "eta": eta,
         "elements": elements,
         "vertices": vertices,
         "threads": threads,
