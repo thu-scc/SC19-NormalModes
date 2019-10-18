@@ -37,13 +37,14 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
     Av_time = float(M_A_Times[1][2])
 
     num_eigs = int(re.compile('Row\D*?(\d+?)\D*?[\d.E+-]*?\D*?Transform', re.S).search(st).group(1))
+    np = nodes * ranks
 
     print('OK!', flush=True)
     if print_result:
         print('Model Info:')
         if nodes > 0:
             print('-   Model: {}'.format(model))
-            print('-   nn/np: {}/{}'.format(nodes, ranks))
+            print('-   nn/np: {}/{}'.format(nodes, np))
         print('-     elm: {}'.format(elements))
         if Ag_size: print('- Ag size: {}'.format(Ag_size))
         # if A_size : print('- A  size: {}'.format(A_size))
@@ -64,7 +65,7 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
     return {
         "model": model,
         "nn": nodes,
-        "np": ranks,
+        "np": np,
         "meshname": meshname,
         "mpi_ranks": mpi_ranks,
         "lower_freq": lower_freq,

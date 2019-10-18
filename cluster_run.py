@@ -3,7 +3,7 @@ import time
 import subprocess
 
 import parse_output
-import matplotlib.pyplot as plt
+from plot_result import plot_weak, plot_fix, plot_strong
 
 current_dataset = 'None'
 dataset = None
@@ -92,180 +92,14 @@ def get_valid_result():
     print("Available models: {}".format([x['label'] for x in done]))
     return done
 
-# the first line is title
-def toTable(input, theme = "display"):
-    for i in range(len(input)):
-        if (len(input[i]) != len(input[0])):
-            print("ERROR! Invalid format in row {}!".format(i))
-            print(input[0])
-            print(input[i])
-            return ""
-
-    in_line = ""
-    enter = ""
-    first = ""
-    middle = ""
-    last = ""
-    if theme == "csv":
-        in_line = ","
-        first = ""
-        middle = "\n"
-        enter = "\n"
-        last = ""
-    elif theme == "complex":
-        in_line = "&"
-        enter = "^_^\n"
-        first =  "=======================================\n"
-        middle = "\n---------------------------------------\n"
-        last =   "***************************************\n"
-    elif theme == 'display':
-        in_line = '\t'
-        first = ""
-        middle = "\n"
-        enter = "\n"
-        last = ""
-    else:
-        print("ERROR! Theme {} not support!".format(theme))
-        return ""
-
-    # and more format ...
-    st = first
-    is_title = True
-    for item in input:
-        is_first = True
-        for x in item:
-            if (not is_first):
-                st += in_line
-            is_first = False
-            st += str(x)
-        if (is_title):
-            st += middle
-            is_title = False
-        else:
-            st += enter
-    st += last
-    return st
-
-def plot_weak():
-    done = get_valid_result()
-    
-    # table
-    tb_detail = [['model', 'nn', 'np', 'ele', 'Ag', 't_Av', 't_Mv']]
-    for model in done:
-        log = model['json-log']
-        tb_detail.append([log['model'],
-                         log['nn'],
-                         log['np'],
-                         log['elements'],
-                         log['Ag_size'],
-                         log['Av_time'],
-                         log['Mv_time']])
-    f = open('plot/weak.table', "w")
-    f.write(toTable(tb_detail, 'display'))
-    f.close()
-
-    # plot time
-    label = []
-    Av = []
-    Mv = []
-    nodes = []
-    for model in done:
-        Av.append(model['json-log']['Av_time'])
-        Mv.append(model['json-log']['Mv_time'])
-        nodes.append(model['json-log']['nn'])
-        label.append(model['label'])
-    plt.semilogx(nodes, Av, 'o-', label="Av")
-    plt.semilogx(nodes, Mv, '*-', label="Mv")
-    plt.xlabel("number of nodes")
-    plt.ylabel("time (s)")
-    plt.legend()
-    plt.savefig("plot/weak-time.eps")
-    plt.close()
-
-    # plot efficiency, assume done[0] is test M1
-    Av_eff = [Av[0]/t for t in Av]
-    Mv_eff = [Mv[0]/t for t in Mv]
-    plt.semilogx(nodes, Av_eff, 'o-', label="Av")
-    plt.semilogx(nodes, Mv_eff, '*-', label="Mv")
-    plt.xlabel("number of nodes")
-    plt.ylabel("efficiency")
-    plt.legend()
-    plt.savefig("plot/weak-efficiency.eps")
-    plt.close()
-
-    # save data used in plot
-    f = open("plot/weak.plot", "w")
-    tb_title = ["model", "Av", "Mv", "Av-eff", "Mv-eff"]
-    tb = [tb_title]
-    for i in range(len(done)):
-        model = done[i]
-        tb.append([label[i], Av[i], Mv[i], Av_eff[i], Mv_eff[i]])
-    f.write(toTable(tb))
-    f.close()
-
-def plot_fix():
-    done = get_valid_result()
-    
-    # table
-    tb_detail = [['model', '(ln, lx)', '(xi,eta)',  '(deg, #it)', '#eigs', 'total']]
-    for model in done:
-        log = model['json-log']
-        tb_detail.append([log['model'],
-                         "({},{})".format(log['lambda_min'], log['lambda_max']),
-                         "({},{})".format(log['xi'], log['eta']),
-                         "({},{})".format(log['deg'], log['it']),
-                         log['num_eigs'],
-                         log['tot_time']])
-
-    f = open('plot/fix.table', "w")
-    f.write(toTable(tb_detail, 'display'))
-    f.close()
-
-    # plot
-    tb_plot = [['model', 'size', 'deg', 'it', 'time']]
-    size = []
-    deg = []
-    it = []
-    tm = []
-    for model in done:
-        log = model['json-log']
-        tb_plot.append([
-            log['model'],
-            log['Ag_size'],
-            log['deg'],
-            log['it'],
-            log['tot_time']
-        ])
-        size.append(log['Ag_size'])
-        deg.append(log['deg'])
-        it.append(log['it'])
-        tm.append(log['tot_time'])
-    plt.subplot(2,2,1)
-    plt.semilogx(size, deg, 'o-', label="deg")
-    plt.xlabel("size")
-    plt.legend()
-
-    plt.subplot(2,2,2)
-    plt.semilogx(size, it, 'o-', label="it")
-    plt.xlabel("size")
-    plt.legend()
-
-    plt.subplot(2,2,3)
-    plt.semilogx(size, tm, 'o-', label="tm")
-    plt.xlabel("size")
-    plt.legend()
-
-    plt.savefig("plot/fix-plot.eps")
-    plt.close()
-    
-    
-
 def plot():
     if (not os.path.exists("plot")):
         os.mkdir("plot")
     if dataset == None:
         print('No dataset selected')
-    else:        dataset['plot']()
+    else:
+        done = get_valid_result()
+        dataset['plot'](done)
 
 def show():
     print('Current dataset: {}'.format(str(current_dataset)))
@@ -302,14 +136,14 @@ env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup
 
 datasets['weak'] = {
     'models': [
-        {'label': 'M1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1', 'outputdir': 'models/output/Moon/M1', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
-        {'label': 'M2', 'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
-        {'label': 'M3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 3, 'ranks': 24, 'threads': 1},
-        {'label': 'M4', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4', 'outputdir': 'models/output/Moon/M4', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
-        {'label': 'M5', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5', 'outputdir': 'models/output/Moon/M5', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 5, 'ranks': 24, 'threads': 1},
-        {'label': 'M6', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6', 'outputdir': 'models/output/Moon/M6', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 6, 'ranks': 24, 'threads': 1}
+        {'label': 'M1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1', 'outputdir': 'models/output/Moon/M1', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'label': 'M2', 'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'label': 'M3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 3, 'ranks': 56, 'threads': 1},
+        {'label': 'M4', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4', 'outputdir': 'models/output/Moon/M4', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+        {'label': 'M5', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5', 'outputdir': 'models/output/Moon/M5', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 5, 'ranks': 56, 'threads': 1},
+        {'label': 'M6', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6', 'outputdir': 'models/output/Moon/M6', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 6, 'ranks': 56, 'threads': 1}
     ],
-    "plot": plot_fix
+    "plot": plot_weak
 }
 
 if __name__ == "__main__":
