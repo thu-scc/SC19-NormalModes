@@ -56,6 +56,7 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
         print('- (ln,lx): ({:.6f}, {:.6f})'.format(lambda_min, lambda_max))
         print('- (xi,eta): ({}, {})'.format(xi, eta))
         print('- (dg,it): ({}, {})'.format(deg, it))
+        print('- eigs: {}'.format(num_eigs))
         print('-   total: {:.6f}'.format(tot_time))
         print('Strong Scalability:')
         print('-      Av: {:.6f}'.format(Av_time))
