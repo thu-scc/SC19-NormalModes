@@ -53,7 +53,7 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
         print('-      Av: {:.6f}'.format(Av_time))
         print('-      Mv: {:.6f}'.format(Mv_time))
         print('Fixed Interval:')
-        print('- (ln,lx): ({:.6f}, {:.6f})'.format(lambda_min, lambda_max))
+        print('- (ln,lx): ({:.10f}, {:.10f})'.format(lambda_min, lambda_max))
         print('- (xi,eta): ({}, {})'.format(xi, eta))
         print('- (dg,it): ({}, {})'.format(deg, it))
         print('- eigs: {}'.format(num_eigs))
