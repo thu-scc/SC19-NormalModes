@@ -117,6 +117,9 @@ def run(label):
         if not node_name in available_nodes:
             print('Invalid node {}'.format(node_name))
             return
+    global_conf = generate_global_conf(model)
+    with open('global_conf', 'w') as f:
+        f.write(global_conf)
     bash = ''
     bash += '#!/bin/bash\n'
     bash += 'export OMP_NUM_THREADS={}\n'.format(model['threads'])
