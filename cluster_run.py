@@ -101,7 +101,8 @@ def plot():
         print('No dataset selected')
     else:
         done = get_valid_result()
-        dataset['plot'](done)
+        for func in dataset['plot']:
+            func(done)
 
 def run(label):
     if dataset == None:
@@ -152,16 +153,16 @@ datasets['weak'] = {
         {'label': 'M5', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5', 'outputdir': 'models/output/Moon/WeakM5', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
         {'label': 'M6', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6', 'outputdir': 'models/output/Moon/WeakM6', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1}
     ],
-    "plot": plot_weak
+    "plot": [plot_weak, plot_fix]
 }
 
 datasets['strong'] = {
     'models': [
         {'label': 'M3-strong1', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3-strong1', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
         {'label': 'M3-strong2', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3-strong2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        {'label': 'M3-strong3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3-strong3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+        {'label': 'M3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/WeakM3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
     ],
-    "plot": plot_weak
+    "plot": [plot_strong]
 }
 
 if __name__ == "__main__":

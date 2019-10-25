@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 
+fig_extension = "png"
+
 # the first line is title
 def toTable(input, theme = "display"):
     for i in range(len(input)):
@@ -79,14 +81,15 @@ def plot_weak(done):
     for model in done:
         Av.append(model['json-log']['Av_time'])
         Mv.append(model['json-log']['Mv_time'])
-        nodes.append(model['json-log']['nn'])
+        nodes.append(model['json-log']['elements']) # TODO should plot nn, change to elements temprarily
         label.append(model['label'])
     plt.semilogx(nodes, Av, 'o-', label="Av")
     plt.semilogx(nodes, Mv, '*-', label="Mv")
-    plt.xlabel("number of nodes")
+    # TODO plt.xlabel("number of nodes")
+    plt.xlabel("number of elements")
     plt.ylabel("time (s)")
     plt.legend()
-    plt.savefig("plot/weak-time.eps")
+    plt.savefig("plot/weak-time.{}".format(fig_extension))
     plt.show()
     plt.close()
 
@@ -95,10 +98,11 @@ def plot_weak(done):
     Mv_eff = [Mv[0]/t for t in Mv]
     plt.semilogx(nodes, Av_eff, 'o-', label="Av")
     plt.semilogx(nodes, Mv_eff, '*-', label="Mv")
-    plt.xlabel("number of nodes")
+    # TODO plt.xlabel("number of nodes") 
+    plt.xlabel("number of elements")
     plt.ylabel("efficiency")
     plt.legend()
-    plt.savefig("plot/weak-efficiency.eps")
+    plt.savefig("plot/weak-efficiency.{}".format(fig_extension))
     plt.show()
     plt.close()
 
@@ -166,7 +170,7 @@ def plot_fix(done):
     plt.xlabel("size")
     plt.legend()
 
-    plt.savefig("plot/fix-plot.eps")
+    plt.savefig("plot/fix-plot.{}".format(fig_extension))
     plt.show()
     plt.close()
     
@@ -232,7 +236,7 @@ def plot_strong(done):
     plt.ylabel("efficiency")
     plt.legend()
 
-    plt.savefig("plot/strong.eps")
+    plt.savefig("plot/strong.{}".format(fig_extension))
     plt.show()
     plt.close()
 
