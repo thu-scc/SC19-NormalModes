@@ -136,7 +136,8 @@ def run(label):
         f.write(bash)
     os.system('nohup bash cluster_generated_run.sh > {} 2>&1 &'.format(model_log(model)))
     model['running_on'] = nodes_list_str
-    print('Task submitted')
+    print('Task submitted, sleep 20s')
+    time.sleep(20)
 
 log_dir = 'logs/'
 bin_path = '../bin/plmvcg_istar.out'
