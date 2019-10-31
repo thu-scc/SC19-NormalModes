@@ -68,6 +68,9 @@ def parse(label, print_result = True):
         print('No dataset selected')
         return
     model = get_model(label)
+    if model == None:
+        print("invalid model name")
+        return
     try:
         out = parse_output.parse_output(model_log(model), print_result, label, model['nodes'], model['ranks'])
         model['json-log'] = out
@@ -108,9 +111,12 @@ def run(label):
     if dataset == None:
         print('No dataset selected')
         return
+    model = get_model(label)
+    if model == None:
+        print("invalid label name")
+        return
     nodes_list_str = input('> Input list of nodes: ')
     nodes_list_arr = nodes_list_str.split(',')
-    model = get_model(label)
     if len(nodes_list_arr) != model['nodes']:
         print('Number of nodes does not match')
         return
