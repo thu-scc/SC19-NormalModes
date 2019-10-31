@@ -146,7 +146,7 @@ log_dir = 'logs/'
 bin_path = '../bin/plmvcg_bic.out'
 available_nodes = ['bic01', 'bic02', 'bic03', 'bic04', 'bic05', 'bic06', 'bic07', 'bic08', 'bic09', 'bic10']
 
-env_cmd = 'source $HOME/intel-env.sh\ncd $HOME/SC19/NormalModes/demos\n'
+env_cmd = 'source $HOME/intel-env.sh\ncd $HOME/SC19/NormalModes/demos\nulimit -s unlimited\n'
 
 datasets['weak'] = {
     'models': [
