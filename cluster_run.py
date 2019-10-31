@@ -131,7 +131,7 @@ def run(label):
     bash += '#!/bin/bash\n'
     bash += 'export OMP_NUM_THREADS={}\n'.format(model['threads'])
     bash += env_cmd
-    run_cmd = 'mpirun -n {} -hosts {} {}'.format(model['nodes'] * model['ranks'], nodes_list_str, bin_path)
+    run_cmd = 'mpirun -n {} -hosts {} bash -c "ulimit -s unlimited && {}"'.format(model['nodes'] * model['ranks'], nodes_list_str, bin_path)
     bash += run_cmd
     print('Command will be: {}'.format(run_cmd))
     choice = input('> Confirm? (y/n) ')
