@@ -4,3 +4,4 @@ trash
 plot
 __pycache__
 ut.in
+.DS_Store

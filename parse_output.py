@@ -34,7 +34,7 @@ def parse_output(filename, print_result=True, model='', nodes=0, ranks=0):
 
     M_A_Times = re.compile('Matvec in ChebIter.*?([\d.]+).*?([\d]+).*?([\d.]+)').findall(st)
     Mv_time = float(M_A_Times[0][2])
-    Av_time = float(M_A_Times[1][2])
+    Av_time = float(re.compile('Matvec matrix A.*?([\d.]+).*?([\d]+).*?([\d.]+)').search(st).group(3))
 
     num_eigs = int(re.compile('Row\D*?(\d+?)\D*?[\d.E+-]*?\D*?Transform', re.S).search(st).group(1))
     np = nodes * ranks
