@@ -97,7 +97,7 @@ def get_valid_result():
     print("Available models: {}".format([x['label'] for x in done]))
     return done
 
-def plot():
+def plot(show=False):
     if (not os.path.exists("plot")):
         os.mkdir("plot")
     if dataset == None:
@@ -105,7 +105,7 @@ def plot():
     else:
         done = get_valid_result()
         for func in dataset['plot']:
-            func(done)
+            func(done, show)
 
 def run(label):
     if dataset == None:
@@ -170,17 +170,14 @@ datasets['weak'] = {
 
 datasets['strong'] = {
     'models': [
-        {'label': 'M3-strong1', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3-strong1', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        {'label': 'M3-strong2', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/M3-strong2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        {'label': 'M3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/WeakM3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+        {'label': 's-M2-1', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
+        {'label': 'w-M2'  , 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
+        {'label': 's-M2-2', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
     ],
     "plot": [plot_strong]
 }
 
 if __name__ == "__main__":
-    switch_dataset('weak')
-    plot()
-    exit()
     print('SCC 19, Tsinghua University, Reproduciblity Command Line')
     print('Commands: switch <experiment>, run <label>, parse <label>, check, plot, download, exit')
     print('Notes: this script must be run in demos dir, e.g.: python3 tools/cluster_run.py in demos dir')
@@ -209,7 +206,7 @@ if __name__ == "__main__":
         elif command == 'check':
             check()
         elif command == 'plot':
-            plot()
+            plot(show=(len(line) > 1))
         elif command == 'download':
             if (not os.path.exists("trash")):
                 os.mkdir("trash")

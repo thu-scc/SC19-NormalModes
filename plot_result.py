@@ -88,7 +88,7 @@ class WeakDataFormat:
         self.Av_eff = [self.Av[0] / t for t in self.Av]
         self.Mv_eff = [self.Mv[0] / t for t in self.Mv]
 
-def plot_weak(done):
+def plot_weak(done, show=False):
     # table
     tb_detail = [['model', 'nn', 'np', 'ele', 'Ag', 't_Av', 't_Mv']]
     for model in done:
@@ -136,10 +136,11 @@ def plot_weak(done):
     plt.legend(loc='upper left')
     plt.tight_layout()
     plt.savefig("plot/weak.{}".format(fig_extension))
-    # plt.show()  # we can add this line while not on cluster
+    if show:
+        plt.show()
     plt.close()
 
-def plot_fix(done):
+def plot_fix(done, show=False):
     # table
     tb_detail = [['model', '(ln, lx)', '(xi,eta)',  '(deg, #it)', '#eigs', 'total']]
     for model in done:
@@ -211,10 +212,11 @@ def plot_fix(done):
     plt.subplots_adjust(wspace=0.3, hspace=0)
     plt.tight_layout()
     plt.savefig("plot/fix.{}".format(fig_extension))
-    # plt.show()   # we can add this line while not on cluster
+    if show:
+        plt.show()
     plt.close()
     
-def plot_strong(done):
+def plot_strong(done, show=False):
     C3_nn = [4, 8, 16, 32]
     C3_np = [192, 384, 768, 1536]
     C3_tm = [6854.54, 3247.78, 1779.14, 1259.08]
@@ -249,35 +251,57 @@ def plot_strong(done):
         M3_eff.append(eff)
 
     f = open("plot/strong.table", "w")
-    f.write(toTable(tb_detail))
+    f.write(toTable(tb_detail, 'latex'))
     f.close()
 
-    plt.figure(figsize = [8, 5])
+    plt.figure(figsize = [12, 8])
 
-    plt.subplot(2, 2, 1)
-    plt.plot(C3_nn, C3_tm, "-o", label = "C3 (SKX)")
-    plt.plot(E3_nn, E3_tm, "-*", label = "E3 (SKX)")
+    ax = plt.subplot(2, 2, 1)
+    plt.plot(C3_nn, C3_tm, "-", label="C3 (Paper)", linewidth=0.7, marker='x', markersize=8)
+    plt.plot(E3_nn, E3_tm, "-", label="E3 (Paper)", linewidth=0.7, marker='.', markerfacecolor='none', markersize=8)
+    plt.xscale('log')
+    plt.xlabel("number of nodes")
     plt.ylabel("time (s)")
-    plt.legend()
+    ax.xaxis.set_minor_formatter(x_fmt)
+    ax.xaxis.set_major_formatter(x_fmt)
+    plt.grid(True, which='both')
+    plt.legend(loc='upper right')
 
-    plt.subplot(2, 2, 2)
-    plt.plot(C3_nn, C3_eff, "-o", label = "C3 (SKX)")
-    plt.plot(E3_nn, E3_eff, "-*", label = "E3 (SKX)")
+    ax = plt.subplot(2, 2, 2)
+    plt.plot(C3_nn, C3_eff, "-", label="C3 (Paper)", linewidth=0.7, marker='x', markersize=8)
+    plt.plot(E3_nn, E3_eff, "-", label="E3 (Paper)", linewidth=0.7, marker='.', markerfacecolor='none', markersize=8)
+    plt.xscale('log')
+    plt.xlabel("number of nodes")
     plt.ylabel("efficiency")
-    plt.legend()
+    ax.xaxis.set_minor_formatter(x_fmt)
+    ax.xaxis.set_major_formatter(x_fmt)
+    plt.grid(True, which='both')
+    plt.legend(loc='upper right')
 
-    plt.subplot(2, 2, 3)
-    plt.plot(M3_nn, M3_tm, "-o", label = "M3 (???)")
+    ax = plt.subplot(2, 2, 3)
+    plt.plot(M3_nn, M3_tm, "-", label = "M3 (Ours)", linewidth=0.7, marker='+', markersize=8)
+    plt.xscale('log')
+    plt.xlabel("number of nodes")
     plt.ylabel("time (s)")
-    plt.legend()
+    ax.xaxis.set_minor_formatter(x_fmt)
+    ax.xaxis.set_major_formatter(x_fmt)
+    plt.grid(True, which='both')
+    plt.legend(loc='upper right')
 
-    plt.subplot(2, 2, 4)
-    plt.plot(M3_nn, M3_eff, "-*", label = "M3 (???)")
+    ax = plt.subplot(2, 2, 4)
+    plt.plot(M3_nn, M3_eff, "-", label = "M3 (Ours)", linewidth=0.7, marker='.', markerfacecolor='none', markersize=8)
+    plt.xscale('log')
+    plt.xlabel("number of nodes")
     plt.ylabel("efficiency")
-    plt.legend()
+    ax.xaxis.set_minor_formatter(x_fmt)
+    ax.xaxis.set_major_formatter(x_fmt)
+    plt.grid(True, which='both')
+    plt.legend(loc='upper right')
 
+    plt.tight_layout()
     plt.savefig("plot/strong.{}".format(fig_extension))
-    plt.show()
+    if show:
+        plt.show()
     plt.close()
 
 
