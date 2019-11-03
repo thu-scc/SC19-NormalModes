@@ -156,12 +156,14 @@ env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup
 
 datasets['weak'] = {
     'models': [
-        {'label': 'M1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1', 'outputdir': 'models/output/Moon/WeakM1', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        {'label': 'M2', 'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/WeakM2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        {'label': 'M3', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3', 'outputdir': 'models/output/Moon/WeakM3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
-        {'label': 'M4', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4', 'outputdir': 'models/output/Moon/WeakM4', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        {'label': 'M5', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5', 'outputdir': 'models/output/Moon/WeakM5', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        {'label': 'M6', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6', 'outputdir': 'models/output/Moon/WeakM6', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1}
+        {'group': 0, 'label': 'w-M1',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1',   'outputdir': 'models/output/Moon/M1',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
+        # {'group': 0, 'label': 'w-M2',   'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2',   'outputdir': 'models/output/Moon/M2',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
+        # {'group': 0, 'label': 'w-M3',   'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3',   'outputdir': 'models/output/Moon/M3',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
+        {'group': 0, 'label': 'w-M7-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M7-2', 'outputdir': 'models/output/Moon/M7-2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
+        {'group': 0, 'label': 'w-M8-3', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
+        {'group': 1, 'label': 'w-M4',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4',   'outputdir': 'models/output/Moon/M4',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
+        {'group': 1, 'label': 'w-M5',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5',   'outputdir': 'models/output/Moon/M5',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
+        {'group': 1, 'label': 'w-M6',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6',   'outputdir': 'models/output/Moon/M6',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1}
     ],
     "plot": [plot_weak, plot_fix]
 }
@@ -176,6 +178,9 @@ datasets['strong'] = {
 }
 
 if __name__ == "__main__":
+    switch_dataset('weak')
+    plot()
+    exit()
     print('SCC 19, Tsinghua University, Reproduciblity Command Line')
     print('Commands: switch <experiment>, run <label>, parse <label>, check, plot, download, exit')
     print('Notes: this script must be run in demos dir, e.g.: python3 tools/cluster_run.py in demos dir')
