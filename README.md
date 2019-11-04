@@ -1,4 +1,7 @@
 ## SC19-NormalModes
 
-- Parse output file: `python3 parse_output.py sample_output.log`
+- Command line tools: `python3 cluster_run.py`
 - Run slurm tasks: `python3 slurm_run.py`
+
+#### TODO
+Add readme for the committee to understand the code
