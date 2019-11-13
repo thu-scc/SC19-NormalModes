@@ -163,6 +163,7 @@ def plot_fix(done, show=False):
     tm = []
     tm1 = [[], []]
     size1 = [[], []]
+    unify = [[], []]
     for model in done:
         log = model['json-log']
         tb_plot.append([
@@ -178,9 +179,23 @@ def plot_fix(done, show=False):
         tm.append(log['tot_time'])
         tm1[model['group']].append(log['tot_time'])
         size1[model['group']].append(log['Ag_size'])
+        unify[model['group']].append(log['tot_time'] / log['deg'] / log['it'])
+
+    cdeg = [271, 365, 364, 649, 869, 1062, 1330, 1566]
+    cit =  [652, 672, 672, 672, 672, 672, 672, 672]
+    ctotal = [2143.87, 3318.60, 3247.78, 6224.22, 7731.83, 9287.05, 11104.54, 13914.11]
+    csize = [1038084, 2060190, 3894783, 7954392, 15809076, 31138518, 61381362, 120336519]
+    cunify = [ctotal[i]/cdeg[i]/cit[i] for i in range(8)]
+
+    edeg = [585, 933, 1430, 1957, 2863, 3711, 4922]
+    eit = [612, 632, 652, 652, 652, 652, 652]
+    etotal = [5369.784, 10083.951, 16570.223, 24614.738, 37793.401, 44962.119, 63054.411]
+    esize = [1086702, 2265129, 4466349, 9037671, 17579616, 34115040, 66028227]
+    eunify = [etotal[i]/edeg[i]/eit[i] for i in range(7)]
+    
 
     fig, ax = plt.subplots()
-    plt.semilogx(size, deg, c='xkcd:bright orange', linewidth=1.5, marker='D', markersize=8)
+    plt.semilogx(size, deg, c='xkcd:gold', linewidth=1.5, marker='D', markersize=8)
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
@@ -193,7 +208,7 @@ def plot_fix(done, show=False):
     plt.savefig("plot/fix-deg.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.semilogx(size, it, c='xkcd:kelly green', linewidth=1.5, marker='o', markerfacecolor='none', markersize=8)
+    plt.semilogx(size, it, c='xkcd:hot pink', linewidth=1.5, marker='*', markersize=10)
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
@@ -207,8 +222,8 @@ def plot_fix(done, show=False):
 
     fig, ax = plt.subplots()
     for i in range(2):
-        plt.semilogx(size1[i], tm1[i], 'b-', linewidth=1.5, marker='X', markersize=8)
-    plt.semilogx([max(size1[0]), min(size1[1])], [max(tm1[0]), min(tm1[1])], 'b', linestyle = (0, (5, 10)), linewidth=1.5)
+        plt.semilogx(size1[i], tm1[i], c='xkcd:dodger blue', linewidth=1.5, marker='^', markersize=8)
+    plt.semilogx([max(size1[0]), min(size1[1])], [max(tm1[0]), min(tm1[1])], c='xkcd:dodger blue', linestyle = (0, (5, 10)), linewidth=1.5)
     # have bug if time is not increasing, but it can be easily find from the output figure
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
@@ -219,6 +234,39 @@ def plot_fix(done, show=False):
     ax.xaxis.set_minor_formatter(NullFormatter())
     plt.tight_layout()
     plt.savefig("plot/fix-tm.{}".format(fig_extension))
+
+    fig, ax = plt.subplots()
+    plt.semilogx(csize, cunify, '-', c = 'xkcd:bright orange', linewidth=1.5, marker='X', markersize=8, label = "solid")
+    plt.semilogx(esize, eunify, '-', c = 'xkcd:kelly green', linewidth=1.5, marker='o', markersize=8, markerfacecolor='none', label = "Earth")
+    # not robust, but error can be found from the output figure easily
+    plt.xticks([1e6, 4e6, 16e6, 64e6], [1e6, 4e6, 16e6, 64e6], fontsize = 18)
+    plt.xlabel('problem size', fontsize = 20)
+    plt.yticks(fontsize = 18)
+    plt.ylabel('unified time', fontsize = 20)
+    plt.legend(loc='lower right', fontsize = 20)
+    plt.ylim(ymin = 0, ymax = max(cunify) * 1.5)
+    plt.grid(True, which='both', c='xkcd:light grey')
+    ax.xaxis.set_major_formatter(f_fmt)
+    ax.xaxis.set_minor_formatter(NullFormatter())
+    plt.tight_layout()
+    plt.savefig("plot/fix-unify-paper.{}".format(fig_extension))
+
+
+    fig, ax = plt.subplots()
+    for i in range(2):
+        plt.semilogx(size1[i], unify[i], 'b-', linewidth=1.5, marker='p', markersize=8, label="Moon" if i == 0 else "")
+    plt.semilogx([size1[0][2], size1[1][0]], [unify[0][2], unify[1][0]], 'b-', linestyle = (0, (5, 10)), linewidth=1.5)
+    # not robust, but error can be found from the output figure easily
+    plt.xticks(size, size, fontsize = 18)
+    plt.xlabel('problem size', fontsize = 20)
+    plt.yticks(fontsize = 18)
+    plt.ylabel('unified time', fontsize = 20)
+    plt.legend(loc='lower right', fontsize = 20)
+    plt.grid(True, which='both', c='xkcd:light grey')
+    ax.xaxis.set_major_formatter(f_fmt)
+    ax.xaxis.set_minor_formatter(NullFormatter())
+    plt.tight_layout()
+    plt.savefig("plot/fix-unify.{}".format(fig_extension))
 
     if show:
         plt.show()
