@@ -2,9 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter, FormatStrFormatter, FuncFormatter, NullFormatter
 
 def f_fmt_func(x, pos):
-    if pos % 3 == 0:
-        return '%1.1fM' % (x*1e-6)
-    return ''
+    return '%1.1fM' % (x*1e-6)
 
 f_fmt = FuncFormatter(f_fmt_func)
 x_fmt = FormatStrFormatter('%.0f')
@@ -44,7 +42,7 @@ def toTable(input, theme = "display"):
         last = ""
     elif theme == 'latex':
         first = ''
-        in_line = ' & '
+        in_line = '\t& '
         middle = '\n'
         enter = ' \\\\ \\hline\n'
         last = ''
@@ -175,43 +173,45 @@ def plot_fix(done, show=False):
         deg.append(log['deg'])
         it.append(log['it'])
         tm.append(log['tot_time'])
-    
-    # not sure how to plot
-    plt.figure(figsize = [15, 5])
 
-    ax = plt.subplot(1,3,1)
-    plt.plot(size, deg, 'r-', linewidth=0.7, marker='x', markersize=8)
-    plt.xticks(size)
-    plt.xscale('log')
-    plt.xlabel('size')
-    plt.ylabel('degree')
+    fig, ax = plt.subplots()
+    plt.semilogx(size, deg, c='xkcd:bright orange', linewidth=1.5, marker='D', markersize=10)
+    plt.xticks(size, size, fontsize = 18)
+    plt.xlabel('problem size', fontsize = 20)
+    plt.yticks(fontsize = 18)
+    plt.ylabel('degrees', fontsize = 20)
     plt.grid(True, which='both')
-    ax.xaxis.set_major_formatter(NullFormatter())
-    ax.xaxis.set_minor_formatter(f_fmt)
-
-    ax = plt.subplot(1,3,2)
-    plt.plot(size, it, 'g-', linewidth=0.7, marker='.', markerfacecolor='none', markersize=8)
-    plt.xticks(size)
-    plt.xscale('log')
-    plt.xlabel('size')
-    plt.ylabel('iterations')
-    plt.grid(True, which='both')
-    ax.xaxis.set_major_formatter(NullFormatter())
-    ax.xaxis.set_minor_formatter(f_fmt)
-
-    ax = plt.subplot(1,3,3)
-    plt.plot(size, tm, 'b-', linewidth=0.7, marker='+', markersize=8)
-    plt.xticks(size)
-    plt.xscale('log')
-    plt.xlabel('size')
-    plt.ylabel('total time (s)')
-    plt.grid(True, which='both')
-    ax.xaxis.set_major_formatter(NullFormatter())
-    ax.xaxis.set_minor_formatter(f_fmt)
-
-    plt.subplots_adjust(wspace=0.3, hspace=0)
+    plt.ylim(ymin = 0, ymax = max(deg) * 1.2)
+    ax.xaxis.set_major_formatter(f_fmt)
+    ax.xaxis.set_minor_formatter(NullFormatter())
     plt.tight_layout()
-    plt.savefig("plot/fix.{}".format(fig_extension))
+    plt.savefig("plot/fix-deg.{}".format(fig_extension))
+
+    fig, ax = plt.subplots()
+    plt.semilogx(size, it, c='xkcd:kelly green', linewidth=1.5, marker='o', markerfacecolor='none', markersize=8)
+    plt.xticks(size, size, fontsize = 18)
+    plt.xlabel('problem size', fontsize = 20)
+    plt.yticks(fontsize = 18)
+    plt.ylabel('iterations', fontsize = 20)
+    plt.grid(True, which='both')
+    plt.ylim(ymin = 0, ymax = max(it) * 1.2)
+    ax.xaxis.set_major_formatter(f_fmt)
+    ax.xaxis.set_minor_formatter(NullFormatter())
+    plt.tight_layout()
+    plt.savefig("plot/fix-it.{}".format(fig_extension))
+
+    fig, ax = plt.subplots()
+    plt.semilogx(size, tm, 'b-', linewidth=1.5, marker='X', markersize=8)
+    plt.xticks(size, size, fontsize = 18)
+    plt.xlabel('problem size', fontsize = 20)
+    plt.yticks(fontsize = 18)
+    plt.ylabel('total time (s)', fontsize = 20)
+    plt.grid(True, which='both')
+    ax.xaxis.set_major_formatter(f_fmt)
+    ax.xaxis.set_minor_formatter(NullFormatter())
+    plt.tight_layout()
+    plt.savefig("plot/fix-tm.{}".format(fig_extension))
+
     if show:
         plt.show()
     plt.close()
