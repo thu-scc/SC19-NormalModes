@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter, FormatStrFormatter, FuncFormatter, NullFormatter
+from numpy import format_float_scientific as format_float_scientific
 
 def f_fmt_func(x, pos):
     return '%1.1fM' % (x*1e-6)
@@ -44,7 +45,7 @@ def toTable(input, theme = "display"):
         first = ''
         in_line = '\t& '
         middle = '\n'
-        enter = ' \\\\ \\hline\n'
+        enter = ' \\\\\n'
         last = ''
     else:
         print("ERROR! Theme {} not support!".format(theme))
@@ -144,11 +145,11 @@ def plot_fix(done, show=False):
     for model in done:
         log = model['json-log']
         tb_detail.append([log['model'],
-                         "({},{})".format(log['lambda_min'], log['lambda_max']),
-                         "({},{})".format(log['xi'], log['eta']),
+                         "({},{:.3g})".format(format_float_scientific(log['lambda_min'], exp_digits=1, precision=1), log['lambda_max']),
+                         "({},{})".format(format_float_scientific(log['xi'], exp_digits=1, precision=1), format_float_scientific(log['eta'], exp_digits=1, precision=1)),
                          "({},{})".format(log['deg'], log['it']),
                          log['num_eigs'],
-                         log['tot_time']])
+                         "{:.2f}".format(log['tot_time'])])
 
     f = open('plot/fix.table', "w")
     f.write(toTable(tb_detail, 'latex'))
@@ -157,10 +158,11 @@ def plot_fix(done, show=False):
     # plot
     tb_plot = [['model', 'size', 'deg', 'it', 'time']]
     size = []
-    size1 = [[], []]
     deg = []
     it = []
-    tm = [[], []]
+    tm = []
+    tm1 = [[], []]
+    size1 = [[], []]
     for model in done:
         log = model['json-log']
         tb_plot.append([
@@ -173,7 +175,8 @@ def plot_fix(done, show=False):
         size.append(log['Ag_size'])
         deg.append(log['deg'])
         it.append(log['it'])
-        tm[model['group']].append(log['tot_time'])
+        tm.append(log['tot_time'])
+        tm1[model['group']].append(log['tot_time'])
         size1[model['group']].append(log['Ag_size'])
 
     fig, ax = plt.subplots()
@@ -204,8 +207,8 @@ def plot_fix(done, show=False):
 
     fig, ax = plt.subplots()
     for i in range(2):
-        plt.semilogx(size1[i], tm[i], 'b-', linewidth=1.5, marker='X', markersize=8)
-    plt.semilogx([max(size1[0]), min(size1[1])], [max(tm[0]), min(tm[1])], 'b--', linewidth=1.5)
+        plt.semilogx(size1[i], tm1[i], 'b-', linewidth=1.5, marker='X', markersize=8)
+    plt.semilogx([max(size1[0]), min(size1[1])], [max(tm1[0]), min(tm1[1])], 'b', linestyle = (0, (5, 10)), linewidth=1.5)
     # have bug if time is not increasing, but it can be easily find from the output figure
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
