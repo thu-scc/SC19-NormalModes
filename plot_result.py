@@ -157,9 +157,10 @@ def plot_fix(done, show=False):
     # plot
     tb_plot = [['model', 'size', 'deg', 'it', 'time']]
     size = []
+    size1 = [[], []]
     deg = []
     it = []
-    tm = []
+    tm = [[], []]
     for model in done:
         log = model['json-log']
         tb_plot.append([
@@ -172,10 +173,11 @@ def plot_fix(done, show=False):
         size.append(log['Ag_size'])
         deg.append(log['deg'])
         it.append(log['it'])
-        tm.append(log['tot_time'])
+        tm[model['group']].append(log['tot_time'])
+        size1[model['group']].append(log['Ag_size'])
 
     fig, ax = plt.subplots()
-    plt.semilogx(size, deg, c='xkcd:bright orange', linewidth=1.5, marker='D', markersize=10)
+    plt.semilogx(size, deg, c='xkcd:bright orange', linewidth=1.5, marker='D', markersize=8)
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
@@ -201,7 +203,10 @@ def plot_fix(done, show=False):
     plt.savefig("plot/fix-it.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.semilogx(size, tm, 'b-', linewidth=1.5, marker='X', markersize=8)
+    for i in range(2):
+        plt.semilogx(size1[i], tm[i], 'b-', linewidth=1.5, marker='X', markersize=8)
+    plt.semilogx([max(size1[0]), min(size1[1])], [max(tm[0]), min(tm[1])], 'b--', linewidth=1.5)
+    # have bug if time is not increasing, but it can be easily find from the output figure
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
