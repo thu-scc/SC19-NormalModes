@@ -2,6 +2,9 @@ import os
 import time
 import subprocess
 
+import matplotlib as mpl
+mpl.use('Agg')
+
 import parse_output
 from plot_result import plot_weak, plot_fix, plot_strong
 
@@ -134,7 +137,7 @@ def run(label):
     bash += '#!/bin/bash\n'
     bash += 'export OMP_NUM_THREADS={}\n'.format(model['threads'])
     bash += env_cmd
-    run_cmd = 'mpirun -n {} -hosts {} bash -c "ulimit -s unlimited && {}"'.format(model['nodes'] * model['ranks'], nodes_list_str, bin_path)
+    run_cmd = 'I_MPI_DEBUG=4 I_MPI_PIN=yes I_MPI_PIN_PROCESSOR_LIST=allcores:map=bunch mpirun -n {} -hosts {} bash -c "ulimit -s unlimited && {}"'.format(model['nodes'] * model['ranks'], nodes_list_str, bin_path)
     bash += run_cmd
     print('Command will be: {}'.format(run_cmd))
     choice = input('> Confirm? (y/n) ')
@@ -158,23 +161,22 @@ env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup
 
 datasets['weak'] = {
     'models': [
-        {'group': 0, 'label': 'w-M1',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1',   'outputdir': 'models/output/Moon/M1',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
+        {'group': 0, 'label': 'w-M1',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1',   'outputdir': 'models/output/Moon/M1',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
         # {'group': 0, 'label': 'w-M2',   'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2',   'outputdir': 'models/output/Moon/M2',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
         # {'group': 0, 'label': 'w-M3',   'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3',   'outputdir': 'models/output/Moon/M3',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
-        {'group': 0, 'label': 'w-M7-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M7-2', 'outputdir': 'models/output/Moon/M7-2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
-        {'group': 0, 'label': 'w-M8-3', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
-        {'group': 1, 'label': 'w-M4',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4',   'outputdir': 'models/output/Moon/M4',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
-        {'group': 1, 'label': 'w-M5',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5',   'outputdir': 'models/output/Moon/M5',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
-        {'group': 1, 'label': 'w-M6',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6',   'outputdir': 'models/output/Moon/M6',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1}
+        {'group': 0, 'label': 'w-M7-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M7-2', 'outputdir': 'models/output/Moon/M7-2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'group': 0, 'label': 'w-M8-3', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'w-M4',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4',   'outputdir': 'models/output/Moon/M4',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'w-M5',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5',   'outputdir': 'models/output/Moon/M5',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'w-M6',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6',   'outputdir': 'models/output/Moon/M6',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1}
     ],
     "plot": [plot_weak, plot_fix]
 }
 
 datasets['strong'] = {
     'models': [
-        {'label': 's-M2-1', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
-        {'label': 'w-M2'  , 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
-        {'label': 's-M2-2', 'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M2', 'outputdir': 'models/output/Moon/M2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
+        {'label': 's-M3-1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'label': 's-M3-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
     ],
     "plot": [plot_strong]
 }
