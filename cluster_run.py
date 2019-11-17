@@ -143,10 +143,9 @@ def run(label):
     if not os.path.exists(model['outputdir']):
         print('Output directory {} does not exist, created'.format(model['outputdir']))
         os.makedirs(model['outputdir'])
-    os.system('nohup bash cluster_generated_run.sh > {} 2>&1 &'.format(model_log(model)))
+    os.system('bash cluster_generated_run.sh | tee {}'.format(model_log(model)))
     model['running_on'] = nodes_list_str
-    print('Task submitted, sleep 20s')
-    time.sleep(20)
+    exit()
 
 log_dir = 'logs/'
 bin_path = '../bin/plmvcg_istar.out'
