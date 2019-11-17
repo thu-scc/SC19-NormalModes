@@ -9,8 +9,11 @@ current_dataset = 'None'
 dataset = None
 datasets = {}
 
+def get_time():
+    return time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
+
 def model_log(model):
-    return os.path.join(log_dir, '{}_{}_{}_{}.log'.format(model['label'], model['nodes'], model['ranks'], model['threads']))
+    return os.path.join(log_dir, '{}_{}_{}_{}_{}.log'.format(model['label'], model['nodes'], model['ranks'], model['threads'], get_time()))
 
 def get_model(label):
     for model in dataset['models']:
