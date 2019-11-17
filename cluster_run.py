@@ -149,7 +149,7 @@ def run(label):
 
 log_dir = 'logs/'
 bin_path = '../bin/plmvcg_istar.out'
-available_nodes = ['e1', 'e2', 'e3', 'e4', 'e5', 'e6']
+available_nodes = ['e1', 'e2', 'e3', 'e4']
 
 env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup-env.sh\nsource $HOME/intel_env.sh\ncd $HOME/SC19/NormalModes/demos\nulimit -s unlimited\n'
 
