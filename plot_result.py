@@ -109,12 +109,19 @@ def plot_weak(done, show=False):
     groups = [WeakDataFormat(), WeakDataFormat()]
     for model in done:
         groups[model['group']].add(model)
+    ymax = 0
     for i in range(2):
-        plt.plot(groups[i].nodes, groups[i].Av, '-', label="Av (M1-3)", linewidth=0.7, marker='x', markersize=8)
-        plt.plot(groups[i].nodes, groups[i].Mv, '-', label="Mv (M4-6)", linewidth=0.7, marker='.', markerfacecolor='none', markersize=8)
+        if i == 0:
+            suffix = "(M1-3)"
+        else:
+            suffix = "(M4-6)"
+        plt.plot(groups[i].nodes, groups[i].Av, '-', label="Av " + suffix, linewidth=0.7, marker='x', markersize=8)
+        plt.plot(groups[i].nodes, groups[i].Mv, '-', label="Mv " + suffix, linewidth=0.7, marker='.', markerfacecolor='none', markersize=8)
+        ymax = max(ymax, max(groups[i].Av), max(groups[i].Mv))
     plt.xscale('log')
     plt.xlabel("number of nodes")
     plt.ylabel("time (s)")
+    plt.ylim(ymin=0, ymax=ymax*1.2)
     plt.grid(True, which='both')
     ax.xaxis.set_minor_formatter(x_fmt)
     ax.xaxis.set_major_formatter(x_fmt)
@@ -133,6 +140,7 @@ def plot_weak(done, show=False):
     ax.xaxis.set_major_formatter(x_fmt)
     plt.grid(True, which='both')
     plt.legend(loc='upper left')
+    plt.ylim(ymin=0)
     plt.tight_layout()
     plt.savefig("plot/weak.{}".format(fig_extension))
     if show:
