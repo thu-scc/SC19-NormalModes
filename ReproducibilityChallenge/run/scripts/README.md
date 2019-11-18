@@ -13,6 +13,8 @@ It consists the following parts:
 6. **download** Download the logs to the local computer. If the `logs` folder is existed, it will be move to a `Trash` folder.
 7. **exit** Exit the console.
 
+# More Information
+
 See [scc19_team13_ExperimentalEnvironment.txt](<../../compile/scc19_team13_ExperimentalEnvironment.txt>) for the environment variables.
 
 The dataset consists of 6 moon models provided by the SCC committee.
