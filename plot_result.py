@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter, FormatStrFormatter, FuncFormatter, NullFormatter
 from numpy import format_float_scientific as format_float_scientific
 
+plt.rc('xtick', labelsize=18)
+plt.rc('ytick', labelsize=18)
+
 def f_fmt_func(x, pos):
     return '%1.1fM' % (x*1e-6)
 
@@ -103,9 +106,8 @@ def plot_weak(done, show=False):
     f.write(toTable(tb_detail, 'latex'))
     f.close()
 
-    plt.figure(figsize = [12, 5])
     # plot time
-    ax = plt.subplot(1, 2, 1)
+    ax = plt.subplot()
     groups = [WeakDataFormat(), WeakDataFormat()]
     for model in done:
         groups[model['group']].add(model)
@@ -115,34 +117,39 @@ def plot_weak(done, show=False):
             suffix = "(M1-3)"
         else:
             suffix = "(M4-6)"
-        plt.plot(groups[i].nodes, groups[i].Av, '-', label="Av " + suffix, linewidth=0.7, marker='x', markersize=12)
-        plt.plot(groups[i].nodes, groups[i].Mv, '-', label="Mv " + suffix, linewidth=0.7, marker='.', markerfacecolor='none', markersize=12)
+        plt.plot(groups[i].nodes, groups[i].Av, '-', label="Av " + suffix, linewidth=1.5, marker='x', markersize=15)
+        plt.plot(groups[i].nodes, groups[i].Mv, '-', label="Mv " + suffix, linewidth=1.5, marker='.', markerfacecolor='none', markersize=15)
         ymax = max(ymax, max(groups[i].Av), max(groups[i].Mv))
     plt.xscale('log')
-    plt.xlabel("number of nodes")
-    plt.ylabel("time (s)")
+    plt.xlabel("number of nodes", fontsize=20)
+    plt.ylabel("time (s)", fontsize=20)
     plt.ylim(ymin=0, ymax=ymax*1.2)
     plt.grid(True, which='both')
     ax.xaxis.set_minor_formatter(x_fmt)
     ax.xaxis.set_major_formatter(x_fmt)
-    plt.legend(loc='upper left')
+    plt.legend(loc='upper left', fontsize=15)
+    plt.tight_layout()
+    plt.savefig("plot/weak-time.{}".format(fig_extension))
+    if show:
+        plt.show()
+    plt.close()
 
     # plot efficiency, assume done[0] is test M1
-    ax = plt.subplot(1, 2, 2)
+    ax = plt.subplot()
     for i in range(2):
         groups[i].calc_eff()
-        plt.plot(groups[i].nodes, groups[i].Av_eff, '-', label="Av (M1-3)", linewidth=0.7, marker='x', markersize=12)
-        plt.plot(groups[i].nodes, groups[i].Mv_eff, '-', label="Mv (M4-6)", linewidth=0.7, marker='.', markerfacecolor='none', markersize=12)
+        plt.plot(groups[i].nodes, groups[i].Av_eff, '-', label="Av (M1-3)", linewidth=1.5, marker='x', markersize=15)
+        plt.plot(groups[i].nodes, groups[i].Mv_eff, '-', label="Mv (M4-6)", linewidth=1.5, marker='.', markerfacecolor='none', markersize=15)
     plt.xscale('log')
-    plt.xlabel("number of nodes")
-    plt.ylabel("efficiency")
+    plt.xlabel("number of nodes", fontsize=20)
+    plt.ylabel("efficiency", fontsize=20)
     ax.xaxis.set_minor_formatter(x_fmt)
     ax.xaxis.set_major_formatter(x_fmt)
     plt.grid(True, which='both')
-    plt.legend(loc='upper left')
+    plt.legend(loc='lower left', fontsize=20)
     plt.ylim(ymin=0)
     plt.tight_layout()
-    plt.savefig("plot/weak.{}".format(fig_extension))
+    plt.savefig("plot/weak-eff.{}".format(fig_extension))
     if show:
         plt.show()
     plt.close()
@@ -203,7 +210,7 @@ def plot_fix(done, show=False):
     
 
     fig, ax = plt.subplots()
-    plt.semilogx(size, deg, c='xkcd:gold', linewidth=1.5, marker='D', markersize=12)
+    plt.semilogx(size, deg, c='xkcd:gold', linewidth=1.5, marker='x', markersize=15)
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
@@ -216,7 +223,7 @@ def plot_fix(done, show=False):
     plt.savefig("plot/fix-deg.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.semilogx(size, it, c='xkcd:hot pink', linewidth=1.5, marker='*', markersize=15)
+    plt.semilogx(size, it, c='xkcd:hot pink', linewidth=1.5, marker='.', markerfacecolor='none', markersize=15)
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
@@ -230,7 +237,7 @@ def plot_fix(done, show=False):
 
     fig, ax = plt.subplots()
     for i in range(2):
-        plt.semilogx(size1[i], tm1[i], c='xkcd:dodger blue', linewidth=1.5, marker='^', markersize=12)
+        plt.semilogx(size1[i], tm1[i], c='xkcd:dodger blue', linewidth=1.5, marker='.', markersize=13)
     plt.semilogx([max(size1[0]), min(size1[1])], [max(tm1[0]), min(tm1[1])], c='xkcd:dodger blue', linestyle = (0, (5, 10)), linewidth=1.5)
     # have bug if time is not increasing, but it can be easily find from the output figure
     plt.xticks(size, size, fontsize = 18)
@@ -244,8 +251,8 @@ def plot_fix(done, show=False):
     plt.savefig("plot/fix-tm.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.semilogx(csize, cunify, '-', c = 'xkcd:bright orange', linewidth=1.5, marker='X', markersize=12, label = "solid")
-    plt.semilogx(esize, eunify, '-', c = 'xkcd:kelly green', linewidth=1.5, marker='o', markersize=12, markerfacecolor='none', label = "Earth")
+    plt.semilogx(csize, cunify, '-', c = 'xkcd:bright orange', linewidth=1.5, marker='x', markersize=15, label = "Solid")
+    plt.semilogx(esize, eunify, '-', c = 'xkcd:kelly green', linewidth=1.5, marker='o', markersize=15, markerfacecolor='none', label = "Earth")
     # not robust, but error can be found from the output figure easily
     plt.xticks([1e6, 4e6, 16e6, 64e6], [1e6, 4e6, 16e6, 64e6], fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
@@ -262,7 +269,7 @@ def plot_fix(done, show=False):
 
     fig, ax = plt.subplots()
     for i in range(2):
-        plt.semilogx(size1[i], unify[i], 'b-', linewidth=1.5, marker='p', markersize=12, label="Moon" if i == 0 else "")
+        plt.semilogx(size1[i], unify[i], 'b-', linewidth=1.5, marker='x', markersize=15, label="Moon" if i == 0 else "")
     plt.semilogx([size1[0][2], size1[1][0]], [unify[0][2], unify[1][0]], 'b-', linestyle = (0, (5, 10)), linewidth=1.5)
     # not robust, but error can be found from the output figure easily
     plt.xticks(size, size, fontsize = 18)
@@ -319,12 +326,12 @@ def plot_strong(done, show=False):
     f.close()
 
     fig, ax = plt.subplots()
-    plt.semilogx(C3_nn, C3_tm, "-", label="C3 (Paper)", linewidth=1.5, marker='X', markersize=12, c='xkcd:bright orange')
-    plt.semilogx(E3_nn, E3_tm, "-", label="E3 (Paper)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=12, c='xkcd:kelly green')
-    plt.xticks(C3_nn, C3_nn, fontsize = 22)
-    plt.yticks(fontsize = 22)
-    plt.xlabel("number of nodes", fontsize = 25)
-    plt.ylabel("time (s)", fontsize = 25)
+    plt.semilogx(C3_nn, C3_tm, "-", label="C3 (Paper)", linewidth=1.5, marker='x', markersize=15, c='xkcd:bright orange')
+    plt.semilogx(E3_nn, E3_tm, "-", label="E3 (Paper)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15, c='xkcd:kelly green')
+    plt.xticks(C3_nn, C3_nn, fontsize = 18)
+    plt.yticks(fontsize = 18)
+    plt.xlabel("number of nodes", fontsize = 20)
+    plt.ylabel("time (s)", fontsize = 20)
     plt.ylim(ymin = 0)
     ax.xaxis.set_minor_formatter(NullFormatter())
     ax.xaxis.set_major_formatter(x_fmt)
@@ -334,13 +341,13 @@ def plot_strong(done, show=False):
     plt.savefig("plot/strong-paper-time.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.semilogx(C3_nn, C3_eff, "-", label="C3 (Paper)", linewidth=1.5, marker='X', markersize=12, c='xkcd:bright orange')
-    plt.semilogx(E3_nn, E3_eff, "-", label="E3 (Paper)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=12, c='xkcd:kelly green')
+    plt.semilogx(C3_nn, C3_eff, "-", label="C3 (Paper)", linewidth=1.5, marker='x', markersize=15, c='xkcd:bright orange')
+    plt.semilogx(E3_nn, E3_eff, "-", label="E3 (Paper)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15, c='xkcd:kelly green')
     plt.xticks(C3_nn, C3_nn, fontsize = 18)
     plt.yticks(fontsize = 18)
     plt.xlabel("number of nodes", fontsize = 20)
     plt.ylabel("efficiency", fontsize = 20)
-    plt.ylim(ymin = 0.6, ymax = 1.2)
+    plt.ylim(ymin = 0.6, ymax = 1.5)
     ax.xaxis.set_minor_formatter(NullFormatter())
     ax.xaxis.set_major_formatter(x_fmt)
     plt.grid(True, which='major', c='xkcd:light grey')
@@ -349,7 +356,7 @@ def plot_strong(done, show=False):
     plt.savefig("plot/strong-paper-eff.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.semilogx(M3_nn, M3_tm, "b-", label = "M3 (Ours)", linewidth=1.5, marker='p', markersize=12)
+    plt.semilogx(M3_nn, M3_tm, "b-", label = "M3 (Ours)", linewidth=1.5, marker='.', markersize=15)
     plt.xticks(M3_nn, M3_nn, fontsize = 18)
     plt.yticks(fontsize = 18)
     plt.xlabel("number of nodes", fontsize = 20)
@@ -363,12 +370,12 @@ def plot_strong(done, show=False):
     plt.savefig("plot/strong-ours-time.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.plot(M3_nn, M3_eff, "b-", label = "M3 (Ours)", linewidth=1.5, marker='p', markersize=12)
+    plt.plot(M3_nn, M3_eff, "b-", label = "M3 (Ours)", linewidth=1.5, marker='.', markersize=15)
     plt.xticks(M3_nn, M3_nn, fontsize = 18)
     plt.yticks(fontsize = 18)
     plt.xlabel("number of nodes", fontsize = 20)
     plt.ylabel("efficiency", fontsize = 20)
-    plt.ylim(ymin = 0.6, ymax = 1.2)
+    plt.ylim(ymin = 0.6, ymax = 1.5)
     ax.xaxis.set_minor_formatter(NullFormatter())
     ax.xaxis.set_major_formatter(x_fmt)
     plt.grid(True, which='major', c='xkcd:light grey')
