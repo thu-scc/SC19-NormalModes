@@ -172,15 +172,18 @@ datasets['weak'] = {
 
 datasets['strong'] = {
     'models': [
-        {'label': 's-M3-1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
-        {'label': 's-M3-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
+        {'label': 's-M2-1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
+        {'label': 'w-M2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
+        {'label': 's-M2-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1}
     ],
     "plot": [plot_strong]
 }
 
 if __name__ == "__main__":
     switch_dataset('weak')
-    plot(show=True)
+    plot(show=False)
+    switch_dataset('strong')
+    plot(show=False)
     exit()
     print('SCC 19, Tsinghua University, Reproduciblity Command Line')
     print('Commands: switch <experiment>, run <label>, parse <label>, check, plot, download, exit')
