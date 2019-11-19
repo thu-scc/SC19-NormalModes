@@ -68,3 +68,17 @@ It consists the following parts:
 
 1. 更新脚本
 
+### output
+
+1. 放结果
+
+### figures
+
+1. 放结果，更新readme
+2. 更新脚本
+3. VTK
+
+### doc
+
+1. final report
+2. results in readme

@@ -6,7 +6,7 @@ __pycache__
 ut.in
 .DS_Store
 ReproducibilityChallenge/compile/files/*
-ReproducibilityChallenge/compile/scc19_team13_ExperimentalEnvironment.txt​
+ReproducibilityChallenge/compile/scc19_team13_ExperimentalEnvironment.txt
 ReproducibilityChallenge/doc/scc19_team13_normalmodes_reproducibility_report.pdf
 ReproducibilityChallenge/figures/output/*
 ReproducibilityChallenge/figures/scripts/*.py
