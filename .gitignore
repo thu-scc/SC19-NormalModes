@@ -14,3 +14,5 @@ ReproducibilityChallenge/input/*
 ReproducibilityChallenge/run/output/*/*
 ReproducibilityChallenge/run/scripts/*.py
 
+cluster_generated_run.sh
+global_conf

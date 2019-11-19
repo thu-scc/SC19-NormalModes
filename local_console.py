@@ -158,31 +158,30 @@ env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup
 
 datasets['weak'] = {
     'models': [
-        {'group': 0, 'label': 'w-M1',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1',   'outputdir': 'models/output/Moon/M1',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
-        # {'group': 0, 'label': 'w-M2',   'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2',   'outputdir': 'models/output/Moon/M2',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
-        # {'group': 0, 'label': 'w-M3',   'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3',   'outputdir': 'models/output/Moon/M3',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
-        {'group': 0, 'label': 'w-M7-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M7-2', 'outputdir': 'models/output/Moon/M7-2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
-        {'group': 0, 'label': 'w-M8-3', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
-        {'group': 1, 'label': 'w-M4',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4',   'outputdir': 'models/output/Moon/M4',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
-        {'group': 1, 'label': 'w-M5',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5',   'outputdir': 'models/output/Moon/M5',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
-        {'group': 1, 'label': 'w-M6',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6',   'outputdir': 'models/output/Moon/M6',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1}
+        {'group': 0, 'label': 'f-w-M1-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_1M.1', 'inputdir': 'final/input/M1',   'outputdir': 'final/output/M1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'group': 0, 'label': 'f-w-M2-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'group': 0, 'label': 'f-w-M3-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+        # {'group': 1, 'label': 'f-w-M1-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_1M.1', 'inputdir': 'final/input/M1',   'outputdir': 'final/output/M1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        # {'group': 1, 'label': 'f-w-M2-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        # {'group': 1, 'label': 'f-w-M3-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+        # {'group': 1, 'label': 'f-w-M4-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_32M.1', 'inputdir': 'final/input/M4',   'outputdir': 'final/output/M4',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        # {'group': 1, 'label': 'f-w-M5-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_64M.1', 'inputdir': 'final/input/M5',   'outputdir': 'final/output/M5',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        # {'group': 1, 'label': 'f-w-M6-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_128M.1', 'inputdir': 'final/input/M6',   'outputdir': 'final/output/M6',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
     ],
     "plot": [plot_weak, plot_fix]
 }
 
 datasets['strong'] = {
     'models': [
-        {'label': 's-M2-1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 24, 'threads': 1},
-        {'label': 'w-M2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
-        {'label': 's-M2-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1}
+        {'group': 2, 'label': 'f-s-M3-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3-1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'group': 2, 'label': 'f-s-M3-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3-2',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'group': 0, 'label': 'f-w-M3-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
     ],
     "plot": [plot_strong]
 }
 
 if __name__ == "__main__":
     switch_dataset('weak')
-    plot(show=False)
-    switch_dataset('strong')
     plot(show=False)
     exit()
     print('SCC 19, Tsinghua University, Reproduciblity Command Line')

@@ -112,7 +112,7 @@ def plot_weak(done, show=False):
     for model in done:
         groups[model['group']].add(model)
     ymax = 0
-    for i in range(2):
+    for i in range(1):
         if i == 0:
             suffix = "(M1-3)"
         else:
@@ -136,10 +136,14 @@ def plot_weak(done, show=False):
 
     # plot efficiency, assume done[0] is test M1
     ax = plt.subplot()
-    for i in range(2):
+    for i in range(1):
+        if i == 0:
+            suffix = "(M1-3)"
+        else:
+            suffix = "(M4-6)"
         groups[i].calc_eff()
-        plt.plot(groups[i].nodes, groups[i].Av_eff, '-', label="Av (M1-3)", linewidth=1.5, marker='x', markersize=15)
-        plt.plot(groups[i].nodes, groups[i].Mv_eff, '-', label="Mv (M4-6)", linewidth=1.5, marker='.', markerfacecolor='none', markersize=15)
+        plt.plot(groups[i].nodes, groups[i].Av_eff, '-', label="Av " + suffix, linewidth=1.5, marker='x', markersize=15)
+        plt.plot(groups[i].nodes, groups[i].Mv_eff, '-', label="Mv " + suffix, linewidth=1.5, marker='.', markerfacecolor='none', markersize=15)
     plt.xscale('log')
     plt.xlabel("number of nodes", fontsize=20)
     plt.ylabel("efficiency", fontsize=20)
@@ -236,9 +240,9 @@ def plot_fix(done, show=False):
     plt.savefig("plot/fix-it.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    for i in range(2):
+    for i in range(1):
         plt.semilogx(size1[i], tm1[i], c='xkcd:dodger blue', linewidth=1.5, marker='.', markersize=13)
-    plt.semilogx([max(size1[0]), min(size1[1])], [max(tm1[0]), min(tm1[1])], c='xkcd:dodger blue', linestyle = (0, (5, 10)), linewidth=1.5)
+    # plt.semilogx([max(size1[0]), min(size1[1])], [max(tm1[0]), min(tm1[1])], c='xkcd:dodger blue', linestyle = (0, (5, 10)), linewidth=1.5)
     # have bug if time is not increasing, but it can be easily find from the output figure
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
@@ -268,9 +272,9 @@ def plot_fix(done, show=False):
 
 
     fig, ax = plt.subplots()
-    for i in range(2):
+    for i in range(1):
         plt.semilogx(size1[i], unify[i], 'b-', linewidth=1.5, marker='x', markersize=15, label="Moon" if i == 0 else "")
-    plt.semilogx([size1[0][2], size1[1][0]], [unify[0][2], unify[1][0]], 'b-', linestyle = (0, (5, 10)), linewidth=1.5)
+    # plt.semilogx([size1[0][2], size1[1][0]], [unify[0][2], unify[1][0]], 'b-', linestyle = (0, (5, 10)), linewidth=1.5)
     # not robust, but error can be found from the output figure easily
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)

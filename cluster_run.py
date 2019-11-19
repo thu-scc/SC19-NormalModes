@@ -137,7 +137,7 @@ def run(label):
     bash += '#!/bin/bash\n'
     bash += 'export OMP_NUM_THREADS={}\n'.format(model['threads'])
     bash += env_cmd
-    run_cmd = 'I_MPI_DEBUG=4 I_MPI_PIN=yes I_MPI_PIN_PROCESSOR_LIST=allcores:map=bunch mpirun -n {} -hosts {} bash -c "ulimit -s unlimited && {}"'.format(model['nodes'] * model['ranks'], nodes_list_str, bin_path)
+    run_cmd = 'I_MPI_PIN=yes I_MPI_PIN_PROCESSOR_LIST=allcores:map=bunch mpirun -n {} -hosts {} bash -c "ulimit -s unlimited && {}"'.format(model['nodes'] * model['ranks'], nodes_list_str, bin_path)
     bash += run_cmd
     print('Command will be: {}'.format(run_cmd))
     choice = input('> Confirm? (y/n) ')
@@ -159,26 +159,19 @@ available_nodes = ['e1', 'e2', 'e3', 'e4']
 
 env_cmd = 'source /etc/profile.d/modules.sh\nsource /opt/spack/share/spack/setup-env.sh\nsource $HOME/intel_env.sh\ncd $HOME/SC19/NormalModes/demos\nulimit -s unlimited\n'
 
-datasets['weak'] = {
+datasets['final'] = {
     'models': [
-        {'group': 0, 'label': 'w-M1',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M1',   'outputdir': 'models/output/Moon/M1',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        # {'group': 0, 'label': 'w-M2',   'JOB': 2, 'basename': 'Mtopo_6L_1M.1'  , 'inputdir': 'models/input/Moon/M2',   'outputdir': 'models/output/Moon/M2',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 24, 'threads': 1},
-        # {'group': 0, 'label': 'w-M3',   'JOB': 2, 'basename': 'Mtopo_6L_2M.1'  , 'inputdir': 'models/input/Moon/M3',   'outputdir': 'models/output/Moon/M3',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 24, 'threads': 1},
-        {'group': 0, 'label': 'w-M7-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M7-2', 'outputdir': 'models/output/Moon/M7-2', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        {'group': 0, 'label': 'w-M8-3', 'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
-        {'group': 1, 'label': 'w-M4',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M4',   'outputdir': 'models/output/Moon/M4',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        {'group': 1, 'label': 'w-M5',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M5',   'outputdir': 'models/output/Moon/M5',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        {'group': 1, 'label': 'w-M6',   'JOB': 2, 'basename': 'Mtopo_6L_test.1', 'inputdir': 'models/input/Moon/M6',   'outputdir': 'models/output/Moon/M6',   'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1}
+        {'group': 0, 'label': 'f-w-M1-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_1M.1', 'inputdir': 'final/input/M1',   'outputdir': 'final/output/M1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'group': 0, 'label': 'f-w-M2-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'group': 0, 'label': 'f-w-M3-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'f-w-M4-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_32M.1', 'inputdir': 'final/input/M4',   'outputdir': 'final/output/M4',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'f-w-M5-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_64M.1', 'inputdir': 'final/input/M5',   'outputdir': 'final/output/M5',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'f-w-M6-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_128M.1', 'inputdir': 'final/input/M6',   'outputdir': 'final/output/M6',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+
+        {'group': 2, 'label': 'f-s-M2-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2-1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'group': 2, 'label': 'f-s-M2-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2-4',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
     ],
     "plot": [plot_weak, plot_fix]
-}
-
-datasets['strong'] = {
-    'models': [
-        {'label': 's-M3-1', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        {'label': 's-M3-2', 'JOB': 2, 'basename': 'Mtopo_6L_test.1'  , 'inputdir': 'models/input/Moon/M8-3', 'outputdir': 'models/output/Moon/s-M8-3', 'lowfreq': 0.2, 'upfreq': 2.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-    ],
-    "plot": [plot_strong]
 }
 
 if __name__ == "__main__":
@@ -186,6 +179,7 @@ if __name__ == "__main__":
     print('Commands: switch <experiment>, run <label>, parse <label>, check, plot, download, exit')
     print('Notes: this script must be run in demos dir, e.g.: python3 tools/cluster_run.py in demos dir')
     pre_check()
+    switch_dataset('final')
     while True:
         line = input('> ').split()
         if len(line) == 0: continue
