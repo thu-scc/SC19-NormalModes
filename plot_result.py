@@ -92,12 +92,11 @@ class WeakDataFormat:
 
 def plot_weak(done, show=False):
     # table
-    tb_detail = [['model', 'nn', 'np', 'ele', 'Ag', 't_Av', 't_Mv']]
+    tb_detail = [['model', 'nn/np', 'ele', 'Ag', 't_Av', 't_Mv']]
     for model in done:
         log = model['json-log']
         tb_detail.append([log['model'],
-                         log['nn'],
-                         log['np'],
+                         "{}/{}".format(log['nn'], log['np']),
                          log['elements'],
                          log['Ag_size'],
                          log['Av_time'],
@@ -112,7 +111,7 @@ def plot_weak(done, show=False):
     for model in done:
         groups[model['group']].add(model)
     ymax = 0
-    for i in range(1):
+    for i in range(2):
         if i == 0:
             suffix = "(M1-3)"
         else:
@@ -136,7 +135,7 @@ def plot_weak(done, show=False):
 
     # plot efficiency, assume done[0] is test M1
     ax = plt.subplot()
-    for i in range(1):
+    for i in range(2):
         if i == 0:
             suffix = "(M1-3)"
         else:
@@ -227,7 +226,7 @@ def plot_fix(done, show=False):
     plt.savefig("plot/fix-deg.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.semilogx(size, it, c='xkcd:hot pink', linewidth=1.5, marker='.', markerfacecolor='none', markersize=15)
+    plt.semilogx(size, it, c='xkcd:hot pink', linewidth=1.5, marker='o', markerfacecolor='none', markersize=15)
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
@@ -240,9 +239,9 @@ def plot_fix(done, show=False):
     plt.savefig("plot/fix-it.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    for i in range(1):
-        plt.semilogx(size1[i], tm1[i], c='xkcd:dodger blue', linewidth=1.5, marker='.', markersize=13)
-    # plt.semilogx([max(size1[0]), min(size1[1])], [max(tm1[0]), min(tm1[1])], c='xkcd:dodger blue', linestyle = (0, (5, 10)), linewidth=1.5)
+    for i in range(2):
+        plt.semilogx(size1[i], tm1[i], c='xkcd:dodger blue', linewidth=1.5, marker='o', markerfacecolor='none',  markersize=13)
+    plt.semilogx([max(size1[0]), min(size1[1])], [max(tm1[0]), min(tm1[1])], c='xkcd:dodger blue', linestyle = (0, (5, 10)), linewidth=1.5)
     # have bug if time is not increasing, but it can be easily find from the output figure
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
@@ -272,9 +271,9 @@ def plot_fix(done, show=False):
 
 
     fig, ax = plt.subplots()
-    for i in range(1):
-        plt.semilogx(size1[i], unify[i], 'b-', linewidth=1.5, marker='x', markersize=15, label="Moon" if i == 0 else "")
-    # plt.semilogx([size1[0][2], size1[1][0]], [unify[0][2], unify[1][0]], 'b-', linestyle = (0, (5, 10)), linewidth=1.5)
+    for i in range(2):
+        plt.semilogx(size1[i], unify[i], c = "xkcd:bluish purple", linewidth=1.5, marker='o', markersize=15, markerfacecolor='none', label="Moon" if i == 0 else "")
+    plt.semilogx([size1[0][2], size1[1][0]], [unify[0][2], unify[1][0]], c = "xkcd:bluish purple", linestyle = (0, (5, 10)), linewidth=1.5)
     # not robust, but error can be found from the output figure easily
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
@@ -300,18 +299,18 @@ def plot_strong(done, show=False):
     E3_np = [192, 384, 768]
     E3_tm = [34319.28, 16570.22, 10071.56]
     E3_eff = [1.0, 1.0, 0.85]
-    M3_nn = []
-    M3_np = []
-    M3_tm = []
-    M3_eff = []
+    M_nn = [[], []]
+    M_np = [[], []]
+    M_tm = [[], []]
+    M_eff = [[], []]
     # assume done[0] is the first exp
     tb_detail  = [['nn/np', 'T-Av (s)', 'T-Mv (s)', 'T-M^{-1}v (s)', 'total (s)', 'eff.']]
-    div = None
+    div = [None, None]
     for model in done:
         log = model["json-log"]
-        if div is None:
-            div = log['tot_time'] * log['nn'] # NOTE np should be the total thread?
-        eff = div / (log['tot_time'] * log['nn'])
+        if div[model['group']] is None:
+            div[model['group']] = log['tot_time'] * log['nn'] # NOTE np should be the total thread?
+        eff = div[model['group']] / (log['tot_time'] * log['nn'])
         tb_detail.append([
             "{}/{}".format(log['nn'], log['nn']),
             log['Av_time'],
@@ -320,10 +319,10 @@ def plot_strong(done, show=False):
             log['tot_time'],
             eff
         ])
-        M3_nn.append(log['nn'])
-        M3_np.append(log['np'])
-        M3_tm.append(log['tot_time'])
-        M3_eff.append(eff)
+        M_nn[model['group']].append(log['nn'])
+        M_np[model['group']].append(log['np'])
+        M_tm[model['group']].append(log['tot_time'])
+        M_eff[model['group']].append(eff)
 
     f = open("plot/strong.table", "w")
     f.write(toTable(tb_detail, 'latex'))
@@ -351,7 +350,7 @@ def plot_strong(done, show=False):
     plt.yticks(fontsize = 18)
     plt.xlabel("number of nodes", fontsize = 20)
     plt.ylabel("efficiency", fontsize = 20)
-    plt.ylim(ymin = 0.6, ymax = 1.5)
+    plt.ylim(ymin = 0, ymax = 1.5)
     ax.xaxis.set_minor_formatter(NullFormatter())
     ax.xaxis.set_major_formatter(x_fmt)
     plt.grid(True, which='major', c='xkcd:light grey')
@@ -360,8 +359,9 @@ def plot_strong(done, show=False):
     plt.savefig("plot/strong-paper-eff.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.semilogx(M3_nn, M3_tm, "b-", label = "M3 (Ours)", linewidth=1.5, marker='.', markersize=15)
-    plt.xticks(M3_nn, M3_nn, fontsize = 18)
+    plt.semilogx(M_nn[0], M_tm[0], c="xkcd:reddish pink", label = "M2 (Ours)", linewidth=1.5, marker='x', markersize=15)
+    plt.semilogx(M_nn[1], M_tm[1], c="xkcd:bluish purple", label = "M3 (Ours)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15)
+    plt.xticks(M_nn[0], M_nn[0], fontsize = 18)
     plt.yticks(fontsize = 18)
     plt.xlabel("number of nodes", fontsize = 20)
     plt.ylabel("time (s)", fontsize = 20)
@@ -374,12 +374,13 @@ def plot_strong(done, show=False):
     plt.savefig("plot/strong-ours-time.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.plot(M3_nn, M3_eff, "b-", label = "M3 (Ours)", linewidth=1.5, marker='.', markersize=15)
-    plt.xticks(M3_nn, M3_nn, fontsize = 18)
+    plt.plot(M_nn[0], M_eff[0], c="xkcd:reddish pink", label = "M2 (Ours)", linewidth=1.5, marker='x', markersize=15)
+    plt.plot(M_nn[1], M_eff[1], c="xkcd:bluish purple", label = "M3 (Ours)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15)
+    plt.xticks(M_nn[0], M_nn[0], fontsize = 18)
     plt.yticks(fontsize = 18)
     plt.xlabel("number of nodes", fontsize = 20)
     plt.ylabel("efficiency", fontsize = 20)
-    plt.ylim(ymin = 0.6, ymax = 1.5)
+    plt.ylim(ymin = 0, ymax = 1.5)
     ax.xaxis.set_minor_formatter(NullFormatter())
     ax.xaxis.set_major_formatter(x_fmt)
     plt.grid(True, which='major', c='xkcd:light grey')

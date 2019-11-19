@@ -56,10 +56,6 @@ It consists the following parts:
 
 ## todo
 
-### input
-
-把主办方给的数据放进去
-
 ### compile
 1. 把给的模型放到compile文件夹的model/moon里
 2. 确定机器配置情况
@@ -67,10 +63,6 @@ It consists the following parts:
 ### run
 
 1. 更新脚本
-
-### output
-
-1. 放结果
 
 ### figures
 

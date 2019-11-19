@@ -161,27 +161,30 @@ datasets['weak'] = {
         {'group': 0, 'label': 'f-w-M1-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_1M.1', 'inputdir': 'final/input/M1',   'outputdir': 'final/output/M1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
         {'group': 0, 'label': 'f-w-M2-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
         {'group': 0, 'label': 'f-w-M3-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
-        # {'group': 1, 'label': 'f-w-M1-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_1M.1', 'inputdir': 'final/input/M1',   'outputdir': 'final/output/M1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        # {'group': 1, 'label': 'f-w-M2-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        # {'group': 1, 'label': 'f-w-M3-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
-        # {'group': 1, 'label': 'f-w-M4-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_32M.1', 'inputdir': 'final/input/M4',   'outputdir': 'final/output/M4',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        # {'group': 1, 'label': 'f-w-M5-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_64M.1', 'inputdir': 'final/input/M5',   'outputdir': 'final/output/M5',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        # {'group': 1, 'label': 'f-w-M6-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_128M.1', 'inputdir': 'final/input/M6',   'outputdir': 'final/output/M6',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'f-w-M4-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_32M.1', 'inputdir': 'final/input/M4',   'outputdir': 'final/output/M4',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'f-w-M5-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_64M.1', 'inputdir': 'final/input/M5',   'outputdir': 'final/output/M5',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'f-w-M6-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_128M.1', 'inputdir': 'final/input/M6',   'outputdir': 'final/output/M6',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
     ],
     "plot": [plot_weak, plot_fix]
 }
 
 datasets['strong'] = {
     'models': [
-        {'group': 2, 'label': 'f-s-M3-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3-1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
-        {'group': 2, 'label': 'f-s-M3-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3-2',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
-        {'group': 0, 'label': 'f-w-M3-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+        {'group': 0, 'label': 'f-s-M2-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2-1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'group': 0, 'label': 'f-w-M2-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'group': 0, 'label': 'f-s-M2-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_2M.1', 'inputdir': 'final/input/M2',   'outputdir': 'final/output/M2-4',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
+
+        {'group': 1, 'label': 'f-s-M3-1',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3-1',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 1, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'f-s-M3-2',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3-2',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 2, 'ranks': 56, 'threads': 1},
+        {'group': 1, 'label': 'f-w-M3-4',   'JOB': 2, 'basename': 'RTMDWAK_3L_16M.1', 'inputdir': 'final/input/M3',   'outputdir': 'final/output/M3-4',   'lowfreq': 0.5, 'upfreq': 1.0, 'pOrder': 1, 'nodes': 4, 'ranks': 56, 'threads': 1},
     ],
     "plot": [plot_strong]
 }
 
 if __name__ == "__main__":
     switch_dataset('weak')
+    plot(show=False)
+    switch_dataset('strong')
     plot(show=False)
     exit()
     print('SCC 19, Tsinghua University, Reproduciblity Command Line')
