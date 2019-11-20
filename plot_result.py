@@ -217,7 +217,7 @@ def plot_fix(done, show=False):
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
-    plt.ylabel('degrees', fontsize = 20)
+    plt.ylabel('degree', fontsize = 20)
     plt.grid(True, which='both', c='xkcd:light grey')
     plt.ylim(ymin = 0, ymax = max(deg) * 1.2)
     ax.xaxis.set_major_formatter(f_fmt)
@@ -260,7 +260,7 @@ def plot_fix(done, show=False):
     plt.xticks([1e6, 4e6, 16e6, 64e6], [1e6, 4e6, 16e6, 64e6], fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
-    plt.ylabel('unified time', fontsize = 20)
+    plt.ylabel('unified time (s)', fontsize = 20)
     plt.legend(loc='lower right', fontsize = 20)
     plt.ylim(ymin = 0, ymax = max(cunify) * 1.5)
     plt.grid(True, which='both', c='xkcd:light grey')
@@ -272,13 +272,13 @@ def plot_fix(done, show=False):
 
     fig, ax = plt.subplots()
     for i in range(2):
-        plt.semilogx(size1[i], unify[i], c = "xkcd:bluish purple", linewidth=1.5, marker='o', markersize=15, markerfacecolor='none', label="Moon" if i == 0 else "")
+        plt.semilogx(size1[i], unify[i], c = "xkcd:bluish purple", linewidth=1.5, marker='o', markersize=15, markerfacecolor='none', label="Mars" if i == 0 else "")
     plt.semilogx([size1[0][2], size1[1][0]], [unify[0][2], unify[1][0]], c = "xkcd:bluish purple", linestyle = (0, (5, 10)), linewidth=1.5)
     # not robust, but error can be found from the output figure easily
     plt.xticks(size, size, fontsize = 18)
     plt.xlabel('problem size', fontsize = 20)
     plt.yticks(fontsize = 18)
-    plt.ylabel('unified time', fontsize = 20)
+    plt.ylabel('unified time (s)', fontsize = 20)
     plt.legend(loc='lower right', fontsize = 20)
     plt.grid(True, which='both', c='xkcd:light grey')
     ax.xaxis.set_major_formatter(f_fmt)
@@ -293,27 +293,37 @@ def plot_fix(done, show=False):
 def plot_strong(done, show=False):
     C3_nn = [4, 8, 16, 32]
     C3_np = [192, 384, 768, 1536]
+    C3_av = [0.003398, 0.001741, 0.000687, 0.000357]
+    C3_aeff = [x / C3_av[0] for x in C3_av]
     C3_tm = [6854.54, 3247.78, 1779.14, 1259.08]
     C3_eff = [1.0, 1.1, 0.96, 0.68]
     E3_nn = [4, 8, 16]
     E3_np = [192, 384, 768]
+    E3_av = [0.007920, 0.004901, 0.003778]
+    E3_aeff = [x / E3_av[0] for x in E3_av]
     E3_tm = [34319.28, 16570.22, 10071.56]
     E3_eff = [1.0, 1.0, 0.85]
     M_nn = [[], []]
     M_np = [[], []]
+    M_av = [[], []]
+    M_aeff = [[], []]
     M_tm = [[], []]
     M_eff = [[], []]
     # assume done[0] is the first exp
-    tb_detail  = [['nn/np', 'T-Av (s)', 'T-Mv (s)', 'T-M^{-1}v (s)', 'total (s)', 'eff.']]
+    tb_detail  = [['nn/np', 'T-Av (s)', 'Av-eff', 'T-Mv (s)', 'T-M^{-1}v (s)', 'total (s)', 'eff.']]
     div = [None, None]
+    diva = [None, None]
     for model in done:
         log = model["json-log"]
         if div[model['group']] is None:
             div[model['group']] = log['tot_time'] * log['nn'] # NOTE np should be the total thread?
+            diva[model['group']] = log['Av_time'] * log['nn'] 
         eff = div[model['group']] / (log['tot_time'] * log['nn'])
+        effa = diva[model['group']] / (log['Av_time'] * log['nn'])
         tb_detail.append([
             "{}/{}".format(log['nn'], log['nn']),
             log['Av_time'],
+            effa,
             log['Mv_time'],
             log['rev_M_v_time'],
             log['tot_time'],
@@ -321,6 +331,8 @@ def plot_strong(done, show=False):
         ])
         M_nn[model['group']].append(log['nn'])
         M_np[model['group']].append(log['np'])
+        M_av[model['group']].append(log['Av_time'])
+        M_aeff[model['group']].append(effa)
         M_tm[model['group']].append(log['tot_time'])
         M_eff[model['group']].append(eff)
 
@@ -329,64 +341,91 @@ def plot_strong(done, show=False):
     f.close()
 
     fig, ax = plt.subplots()
-    plt.semilogx(C3_nn, C3_tm, "-", label="C3 (Paper)", linewidth=1.5, marker='x', markersize=15, c='xkcd:bright orange')
-    plt.semilogx(E3_nn, E3_tm, "-", label="E3 (Paper)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15, c='xkcd:kelly green')
+    ax.semilogx(C3_nn, C3_tm, "-", label="C3 (time)", linewidth=1.5, marker='x', markersize=15, c='xkcd:red')
+    ax.semilogx(E3_nn, E3_tm, "-", label="E3 (time)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15, c='xkcd:red')
+    ax.set_ylabel("time (s)", fontsize = 20)
+    ax.set_ylim(ymin = 0)
+    ax.xaxis.set_minor_formatter(NullFormatter())
+    ax.xaxis.set_major_formatter(x_fmt)
+    ax.legend(loc='upper left', fontsize = 15)
+    bx = ax.twinx()
+    bx.semilogx(C3_nn, C3_eff, "-", label="C3 (eff)", linewidth=1.5, marker='x', markersize=15, c='xkcd:light green')
+    bx.semilogx(E3_nn, E3_eff, "-", label="E3 (eff)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15, c='xkcd:light green')
+    bx.set_ylabel("efficiency", fontsize = 20)
+    bx.set_ylim(ymin = 0, ymax = 1.5)
+    bx.xaxis.set_minor_formatter(NullFormatter())
+    bx.xaxis.set_major_formatter(x_fmt)
+    bx.legend(loc='upper right', fontsize = 15)
+    plt.xlabel("number of nodes", fontsize = 20)
     plt.xticks(C3_nn, C3_nn, fontsize = 18)
     plt.yticks(fontsize = 18)
-    plt.xlabel("number of nodes", fontsize = 20)
-    plt.ylabel("time (s)", fontsize = 20)
-    plt.ylim(ymin = 0)
-    ax.xaxis.set_minor_formatter(NullFormatter())
-    ax.xaxis.set_major_formatter(x_fmt)
-    plt.grid(True, which='major', c='xkcd:light grey')
-    plt.legend(loc='upper right', fontsize = 25)
     plt.tight_layout()
-    plt.savefig("plot/strong-paper-time.{}".format(fig_extension))
+    plt.savefig("plot/strong-total-paper.{}".format(fig_extension))
+
 
     fig, ax = plt.subplots()
-    plt.semilogx(C3_nn, C3_eff, "-", label="C3 (Paper)", linewidth=1.5, marker='x', markersize=15, c='xkcd:bright orange')
-    plt.semilogx(E3_nn, E3_eff, "-", label="E3 (Paper)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15, c='xkcd:kelly green')
+    ax.semilogx(C3_nn, C3_av, "-", label="C3 (time)", linewidth=1.5, marker='x', markersize=15, c='xkcd:red')
+    ax.semilogx(E3_nn, E3_av, "-", label="E3 (time)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15, c='xkcd:red')
+    plt.xlabel("number of nodes", fontsize = 20)
+    ax.set_ylabel("time (s)", fontsize = 20)
+    ax.set_ylim(ymin = 0)
+    ax.xaxis.set_minor_formatter(NullFormatter())
+    ax.xaxis.set_major_formatter(x_fmt)
+    ax.legend(loc='upper left', fontsize = 15)
+    bx = ax.twinx()
+    bx.semilogx(C3_nn, C3_aeff, "-", label="C3 (eff)", linewidth=1.5, marker='x', markersize=15, c='xkcd:light green')
+    bx.semilogx(E3_nn, E3_aeff, "-", label="E3 (eff)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15, c='xkcd:light green')
+    bx.set_ylabel("efficiency", fontsize = 20)
+    bx.set_ylim(ymin = 0, ymax = 1.5)
+    bx.xaxis.set_minor_formatter(NullFormatter())
+    bx.xaxis.set_major_formatter(x_fmt)
+    bx.legend(loc='upper right', fontsize = 15)
     plt.xticks(C3_nn, C3_nn, fontsize = 18)
     plt.yticks(fontsize = 18)
-    plt.xlabel("number of nodes", fontsize = 20)
-    plt.ylabel("efficiency", fontsize = 20)
-    plt.ylim(ymin = 0, ymax = 1.5)
-    ax.xaxis.set_minor_formatter(NullFormatter())
-    ax.xaxis.set_major_formatter(x_fmt)
-    plt.grid(True, which='major', c='xkcd:light grey')
-    plt.legend(loc='upper right', fontsize = 20)
     plt.tight_layout()
-    plt.savefig("plot/strong-paper-eff.{}".format(fig_extension))
+    plt.savefig("plot/strong-av-paper.{}".format(fig_extension))
 
     fig, ax = plt.subplots()
-    plt.semilogx(M_nn[0], M_tm[0], c="xkcd:reddish pink", label = "M2 (Ours)", linewidth=1.5, marker='x', markersize=15)
-    plt.semilogx(M_nn[1], M_tm[1], c="xkcd:bluish purple", label = "M3 (Ours)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15)
-    plt.xticks(M_nn[0], M_nn[0], fontsize = 18)
-    plt.yticks(fontsize = 18)
-    plt.xlabel("number of nodes", fontsize = 20)
-    plt.ylabel("time (s)", fontsize = 20)
-    plt.ylim(ymin = 0)
+    ax.semilogx(M_nn[0], M_tm[0], "-", label="M2 (time)", linewidth=1.5, marker='^', markersize=15, markerfacecolor='none', c='xkcd:violet')
+    ax.semilogx(M_nn[1], M_tm[1], "-", label="M3 (time)", linewidth=1.5, marker='v', markerfacecolor='none', markersize=15, c='xkcd:violet')
+    ax.set_ylabel("time (s)", fontsize = 20)
+    ax.set_ylim(ymin = 0)
     ax.xaxis.set_minor_formatter(NullFormatter())
     ax.xaxis.set_major_formatter(x_fmt)
-    plt.grid(True, which='major', c='xkcd:light grey')
-    plt.legend(loc='upper right', fontsize = 20)
+    ax.legend(loc='upper left', fontsize = 15)
+    bx = ax.twinx()
+    bx.semilogx(M_nn[0], M_eff[0], "-", label="M2 (eff)", linewidth=1.5, marker='^', markersize=15, markerfacecolor='none', c='xkcd:pale rose')
+    bx.semilogx(M_nn[1], M_eff[1], "-", label="M3 (eff)", linewidth=1.5, marker='v', markerfacecolor='none', markersize=15, c='xkcd:pale rose')
+    bx.set_ylabel("efficiency", fontsize = 20)
+    bx.set_ylim(ymin = 0, ymax = 1.5)
+    bx.xaxis.set_minor_formatter(NullFormatter())
+    bx.xaxis.set_major_formatter(x_fmt)
+    bx.legend(loc='upper right', fontsize = 15)
+    plt.xlabel("number of nodes", fontsize = 20)
+    plt.xticks(M_nn[0], M_nn[0], fontsize = 18)
+    plt.yticks(fontsize = 18)
     plt.tight_layout()
-    plt.savefig("plot/strong-ours-time.{}".format(fig_extension))
+    plt.savefig("plot/strong-total-ours.{}".format(fig_extension))
+
 
     fig, ax = plt.subplots()
-    plt.plot(M_nn[0], M_eff[0], c="xkcd:reddish pink", label = "M2 (Ours)", linewidth=1.5, marker='x', markersize=15)
-    plt.plot(M_nn[1], M_eff[1], c="xkcd:bluish purple", label = "M3 (Ours)", linewidth=1.5, marker='o', markerfacecolor='none', markersize=15)
-    plt.xticks(M_nn[0], M_nn[0], fontsize = 18)
-    plt.yticks(fontsize = 18)
-    plt.xlabel("number of nodes", fontsize = 20)
-    plt.ylabel("efficiency", fontsize = 20)
-    plt.ylim(ymin = 0, ymax = 1.5)
+    ax.semilogx(M_nn[0], M_av[0], "-", label="M2 (time)", linewidth=1.5, marker='^', markersize=15, markerfacecolor='none', c='xkcd:violet')
+    ax.semilogx(M_nn[1], M_av[1], "-", label="M3 (time)", linewidth=1.5, marker='v', markerfacecolor='none', markersize=15, c='xkcd:violet')
+    ax.set_ylabel("time (s)", fontsize = 20)
+    ax.set_ylim(ymin = 0)
     ax.xaxis.set_minor_formatter(NullFormatter())
     ax.xaxis.set_major_formatter(x_fmt)
-    plt.grid(True, which='major', c='xkcd:light grey')
-    plt.legend(loc='upper right', fontsize = 20)
+    ax.legend(loc='upper left', fontsize = 15)
+    bx = ax.twinx()
+    bx.semilogx(M_nn[0], M_aeff[0], "-", label="M2 (eff)", linewidth=1.5, marker='^', markersize=15, markerfacecolor='none', c='xkcd:pale rose')
+    bx.semilogx(M_nn[1], M_aeff[1], "-", label="M3 (eff)", linewidth=1.5, marker='v', markerfacecolor='none', markersize=15, c='xkcd:pale rose')
+    bx.set_ylabel("efficiency", fontsize = 20)
+    bx.set_ylim(ymin = 0, ymax = 1.5)
+    bx.xaxis.set_minor_formatter(NullFormatter())
+    bx.xaxis.set_major_formatter(x_fmt)
+    bx.legend(loc='upper right', fontsize = 15)
+    plt.xlabel("number of nodes", fontsize = 20)
+    plt.xticks(M_nn[0], M_nn[0], fontsize = 18)
+    plt.yticks(fontsize = 18)
     plt.tight_layout()
-    plt.savefig("plot/strong-ours-eff.{}".format(fig_extension))
-
-
-
+    plt.savefig("plot/strong-av-ours.{}".format(fig_extension))
